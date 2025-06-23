@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -16,6 +17,8 @@ import androidx.core.view.WindowInsetsCompat;
 public class MainActivity extends AppCompatActivity {
     private EditText editText;
     private TextView text_TelaCadastro;
+
+    private AppCompatButton btnEntrar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         editText = findViewById(R.id.editEmail);
         editText = findViewById(R.id.editSenha);
         text_TelaCadastro = findViewById(R.id.txtTelaLogin);
+        btnEntrar = findViewById(R.id.btnEntrar);
 
         // Ativa rolagem horizontal
         editText.setHorizontallyScrolling(true);
@@ -44,7 +48,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
 
+        //Sai do login e vai pra tela principal
+        btnEntrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Home.class);
+                startActivity(intent);
+            }
+        });
+    }
 
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:app2="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:layout_height="match_parent"
+    app:layout_width="match_parent"
+    app:fillViewport="true"
+    xmlns:app="http://schemas.android.com/apk/res/android"
+    tools:ignore="NamespaceTypo">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        app:id="@+id/main"
+        app:layout_width="match_parent"
+        app:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            app:id="@+id/my_toolbar"
+            app:layout_width="match_parent"
+            app:layout_height="wrap_content"
+            app:background="@drawable/background"
+            tools:ignore="MissingConstraints"
+            app2:titleTextColor="@color/dark_green"
+            app2:layout_constraintStart_toStartOf="parent"
+            app2:layout_constraintEnd_toEndOf="parent"
+            app2:layout_constraintTop_toTopOf="parent"/>
+
+        <EditText
+            app:id="@+id/editData"
+            style="@style/Edit_Text_Add"
+            app:drawableStart="@drawable/ic_calendar"
+            app:drawablePadding="5dp"
+            app:hint="00 / 00 / 0000"
+            app:inputType="date"
+            app:layout_marginEnd="200dp"
+            app:layout_marginTop="20dp"
+            app2:layout_constraintStart_toStartOf="@id/my_toolbar"
+            app2:layout_constraintEnd_toEndOf="@id/my_toolbar"
+            app2:layout_constraintTop_toBottomOf="@id/my_toolbar"/>
+
+        <EditText
+            app:id="@+id/editValor"
+            style="@style/Edit_Text_Add"
+            app:drawableStart="@drawable/ic_money"
+            app:drawablePadding="5dp"
+            app:hint="Valor R$"
+            app:inputType="numberDecimal"
+            app:layout_marginTop="20dp"
+            app:layout_marginStart="200dp"
+            app2:layout_constraintStart_toStartOf="@id/my_toolbar"
+            app2:layout_constraintEnd_toEndOf="@id/my_toolbar"
+            app2:layout_constraintTop_toBottomOf="@id/my_toolbar"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

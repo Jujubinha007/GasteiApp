@@ -31,6 +31,19 @@
         <item name="android:layout_marginTop">20dp</item>
     </style>
 
+    <style name="Edit_Text_Add">
+        <item name="android:layout_width">180dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/edit_text</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:inputType">text</item>
+        <item name="android:ellipsize">none</item>
+        <item name="android:layout_marginTop">20dp</item>
+    </style>
+
     <style name="Button">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

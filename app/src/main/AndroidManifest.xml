@@ -13,6 +13,15 @@
         android:theme="@style/Theme.GasteiApp"
         tools:targetApi="31">
         <activity
+            android:name=".AddGasto"
+            android:exported="false"
+            android:parentActivityName=".Home"
+            android:label="Adicionar Gasto"/>
+        <activity
+            android:name=".Home"
+            android:exported="false"
+            android:label="Gastei!"/>
+        <activity
             android:name=".FrmCadastro"
             android:exported="false" />
         <activity
