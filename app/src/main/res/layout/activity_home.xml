@@ -17,11 +17,19 @@
         app:layout_width="match_parent"
         app:layout_height="wrap_content"
         app:background="@drawable/background"
-        tools:ignore="MissingConstraints"
         app2:titleTextColor="@color/dark_green"
         app2:layout_constraintStart_toStartOf="parent"
         app2:layout_constraintEnd_toEndOf="parent"
         app2:layout_constraintTop_toTopOf="parent"/>
+    <ImageView
+        app:layout_width="200dp"
+        app:layout_height="40dp"
+        app:src="@drawable/logo_gastei_horizontal"
+        app:layout_marginEnd="180dp"
+        app:layout_marginTop="5dp"
+        app2:layout_constraintEnd_toEndOf="@id/my_toolbar"
+        app2:layout_constraintStart_toStartOf="@+id/my_toolbar"
+        app2:layout_constraintTop_toTopOf="@id/my_toolbar" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         app:id="@+id/btnAdd"

@@ -5,7 +5,8 @@
     app:layout_width="match_parent"
     app:fillViewport="true"
     xmlns:app="http://schemas.android.com/apk/res/android"
-    tools:ignore="NamespaceTypo">
+    tools:ignore="NamespaceTypo"
+    app:importantForAccessibility="no">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         app:id="@+id/main"
@@ -23,31 +24,142 @@
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintTop_toTopOf="parent"/>
 
-        <EditText
-            app:id="@+id/editData"
-            style="@style/Edit_Text_Add"
-            app:drawableStart="@drawable/ic_calendar"
-            app:drawablePadding="5dp"
-            app:hint="00 / 00 / 0000"
-            app:inputType="date"
-            app:layout_marginEnd="200dp"
-            app:layout_marginTop="20dp"
-            app2:layout_constraintStart_toStartOf="@id/my_toolbar"
-            app2:layout_constraintEnd_toEndOf="@id/my_toolbar"
+        <TextView
+            app:id="@+id/txtTelaAdd"
+            app:layout_width="wrap_content"
+            app:layout_height="wrap_content"
+            app:text="Cadastrar Gasto"
+            app:textSize="30sp"
+            app:textStyle="bold"
+            app:textColor="@color/dark_green"
+            app:layout_marginTop="15dp"
+            app2:layout_constraintStart_toStartOf="parent"
+            app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/my_toolbar"/>
 
-        <EditText
-            app:id="@+id/editValor"
-            style="@style/Edit_Text_Add"
-            app:drawableStart="@drawable/ic_money"
-            app:drawablePadding="5dp"
-            app:hint="Valor R$"
-            app:inputType="numberDecimal"
-            app:layout_marginTop="20dp"
-            app:layout_marginStart="200dp"
-            app2:layout_constraintStart_toStartOf="@id/my_toolbar"
-            app2:layout_constraintEnd_toEndOf="@id/my_toolbar"
-            app2:layout_constraintTop_toBottomOf="@id/my_toolbar"/>
+            <!-- Coluna 1: Categoria -->
+            <LinearLayout
+                app:id="@+id/coluna1"
+                app:layout_width="0dp"
+                app:layout_height="wrap_content"
+                app:orientation="vertical"
+                app2:layout_constraintStart_toStartOf="parent"
+                app2:layout_constraintTop_toBottomOf="@id/txtTelaAdd"
+                app:layout_marginStart="20dp"
+                app:layout_marginTop="20dp">
+
+                <TextView
+                    app:id="@+id/txtCategoria"
+                    app:layout_width="wrap_content"
+                    app:layout_height="wrap_content"
+                    app:text="Categoria"
+                    app:textStyle="bold"
+                    app:textSize="25sp"
+                    app:textColor="@color/dark_green" />
+
+                <Spinner
+                    style="@style/Edit_Text_Add"
+                    app:layout_width="match_parent"
+                    app:layout_height="wrap_content"
+                    app:entries="@array/categorias_array"
+                    app2:layout_constraintTop_toBottomOf="@id/txtCategoria" />
+            </LinearLayout>
+
+            <!-- Coluna 2: Forma de pagamento
+            <LinearLayout
+                app:id="@+id/coluna2"
+                app:layout_width="0dp"
+                app:layout_height="wrap_content"
+                app:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/coluna1"
+                app:layout_marginStart="8dp"
+                app:layout_constraintHorizontalWeight="1">
+
+                <TextView
+                    app:layout_width="wrap_content"
+                    app:layout_height="wrap_content"
+                    app:text="Forma de pagamento"
+                    app:textStyle="bold"
+                    app:textColor="@android:color/holo_green_dark" />
+
+                <Spinner
+                    app:layout_width="match_parent"
+                    app:layout_height="wrap_content"
+                    app:entries="@array/pagamento_array" />
+            </LinearLayout>-->
+
+            <!-- Data do gasto
+            <TextView
+                app:id="@+id/label_data"
+                app:layout_width="wrap_content"
+                app:layout_height="wrap_content"
+                app:text="Data do gasto"
+                andapproid:textStyle="bold"
+                app:textColor="@android:color/holo_green_dark"
+                app:layout_constraintTop_toBottomOf="@id/coluna1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_marginTop="16dp" />
+
+            <EditText
+                app:id="@+id/et_data"
+                android:layout_width="0dp"
+                app:layout_height="wrap_content"
+                app:hint="00 / 00 / 0000"
+                android:drawableStart="@drawable/ic_calendar"
+                app:layout_constraintTop_toBottomOf="@id/label_data"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/et_valor"
+                app:layout_marginEnd="8dp"
+                app:layout_constraintHorizontalWeight="1" />-->
+
+            <!-- Valor R$
+            <TextView
+                app:id="@+id/label_valor"
+                app:layout_width="wrap_content"
+                app:layout_height="wrap_content"
+                app:text="Valor R$"
+                app:textStyle="bold"
+                app:textColor="@android:color/holo_green_dark"
+                app:layout_constraintTop_toBottomOf="@id/coluna2"
+                app:layout_constraintStart_toEndOf="@id/et_data"
+                app:layout_marginTop="16dp" />
+
+            <EditText
+                app:id="@+id/et_valor"
+                app:layout_width="0dp"
+                app:layout_height="wrap_content"
+                app:hint="$"
+                app:inputType="numberDecimal"
+                app:layout_constraintTop_toBottomOf="@id/label_valor"
+                app:layout_constraintStart_toEndOf="@id/et_data"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_marginStart="8dp"
+                app:layout_constraintHorizontalWeight="1" />-->
+
+            <!-- Descrição
+            <TextView
+                app:id="@+id/label_desc"
+                app:layout_width="wrap_content"
+                app:layout_height="wrap_content"
+                app:text="Descrição do gasto"
+                app:textStyle="bold"
+                app:textColor="@android:color/holo_green_dark"
+                app:layout_constraintTop_toBottomOf="@id/et_data"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_marginTop="16dp" />
+
+            <EditText
+                app:id="@+id/et_desc"
+                app:layout_width="0dp"
+                app:layout_height="wrap_content"
+                app:hint="Digite aqui..."
+                app:background="@drawable/edittext_border"
+                app:layout_constraintTop_toBottomOf="@id/label_desc"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:minLines="2" />-->
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
