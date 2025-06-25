@@ -10,7 +10,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.content.SharedPreferences;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.database.Cursor;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -18,6 +23,8 @@ public class Home extends AppCompatActivity {
     RecyclerView recyclerView;
     FloatingActionButton btnAdd;
     Toolbar my_toolbar;
+    DatabaseHelper dbHelper;
+    GastoAdapter gastoAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +40,9 @@ public class Home extends AppCompatActivity {
         my_toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(my_toolbar);
 
+        dbHelper = new DatabaseHelper(this);
         recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         btnAdd = findViewById(R.id.btnAdd);
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
@@ -43,7 +52,44 @@ public class Home extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        displayData();
+    }
+
+    private void displayData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
+        int userId = sharedPreferences.getInt(MainActivity.USER_ID_KEY, -1);
+
+        if (userId != -1) {
+            Cursor cursor = dbHelper.getGastosByUser(userId);
+            gastoAdapter = new GastoAdapter(this, cursor);
+            recyclerView.setAdapter(gastoAdapter);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_home, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_logout) {
+            SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.apply();
+
+            Intent intent = new Intent(Home.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

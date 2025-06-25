@@ -1,11 +1,13 @@
 package com.example.gasteiapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,10 +17,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
-    private EditText editText;
+    private EditText editEmail, editSenha;
     private TextView text_TelaCadastro;
-
     private AppCompatButton btnEntrar;
+    private DatabaseHelper dbHelper;
+
+    public static final String SHARED_PREFS = "shared_prefs";
+    public static final String USER_ID_KEY = "user_id_key";
+    SharedPreferences sharedpreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +37,24 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        editText = findViewById(R.id.editEmail);
-        editText = findViewById(R.id.editSenha);
+        dbHelper = new DatabaseHelper(this);
+
+        editEmail = findViewById(R.id.editEmail);
+        editSenha = findViewById(R.id.editSenha);
         text_TelaCadastro = findViewById(R.id.txtTelaLogin);
         btnEntrar = findViewById(R.id.btnEntrar);
+        sharedpreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
-        // Ativa rolagem horizontal
-        editText.setHorizontallyScrolling(true);
-        editText.setMovementMethod(new ScrollingMovementMethod());
+        int loggedInUserId = sharedpreferences.getInt(USER_ID_KEY, -1);
+        if (loggedInUserId != -1) {
+            Intent i = new Intent(MainActivity.this, Home.class);
+            startActivity(i);
+            finish();
+        }
 
-        //Sai do login e vai pra tela de cadastro
+        editEmail.setHorizontallyScrolling(true);
+        editEmail.setMovementMethod(new ScrollingMovementMethod());
+
         text_TelaCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,14 +63,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Sai do login e vai pra tela principal
         btnEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Home.class);
-                startActivity(intent);
+                String email = editEmail.getText().toString();
+                String password = editSenha.getText().toString();
+
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(MainActivity.this, "Por favor, preencha todos os campos.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                boolean isValid = dbHelper.checkUser(email, password);
+                if (isValid) {
+                    int userId = dbHelper.getUserId(email);
+                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                    editor.putInt(USER_ID_KEY, userId);
+                    editor.apply();
+
+                    Intent intent = new Intent(MainActivity.this, Home.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(MainActivity.this, "E-mail ou senha inválidos.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
-
 }

@@ -7,16 +7,20 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class FrmCadastro extends AppCompatActivity {
-    private EditText editText;
+    private EditText editNome, editEmail, editSenha;
+    private AppCompatButton btnCadastrar;
     private ImageView btnVoltar;
+    private DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,21 +33,47 @@ public class FrmCadastro extends AppCompatActivity {
             return insets;
         });
 
-        editText = findViewById(R.id.editNome);
-        editText = findViewById(R.id.editEmailC);
-        editText = findViewById(R.id.editSenhaC);
+        dbHelper = new DatabaseHelper(this);
+
+        editNome = findViewById(R.id.editNome);
+        editEmail = findViewById(R.id.editEmailC);
+        editSenha = findViewById(R.id.editSenhaC);
+        btnCadastrar = findViewById(R.id.btnCadastrar);
         btnVoltar = findViewById(R.id.btnVoltar);
 
-        // Ativa rolagem horizontal
-        editText.setHorizontallyScrolling(true);
-        editText.setMovementMethod(new ScrollingMovementMethod());
+        editNome.setHorizontallyScrolling(true);
+        editNome.setMovementMethod(new ScrollingMovementMethod());
+
+        btnCadastrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = editEmail.getText().toString();
+                String password = editSenha.getText().toString();
+
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(FrmCadastro.this, "Por favor, preencha todos os campos.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (dbHelper.checkUser(email)) {
+                    Toast.makeText(FrmCadastro.this, "Este e-mail já está cadastrado.", Toast.LENGTH_SHORT).show();
+                } else {
+                    boolean success = dbHelper.addUser(email, password);
+                    if (success) {
+                        Toast.makeText(FrmCadastro.this, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(FrmCadastro.this, "Erro ao realizar o cadastro.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
 
         //Sai do cadastro e vai pra tela de login
         btnVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(FrmCadastro.this, MainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
     }

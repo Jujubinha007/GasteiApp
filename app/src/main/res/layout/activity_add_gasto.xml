@@ -1,54 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:app2="http://schemas.android.com/apk/res-auto"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:layout_height="match_parent"
-    app:layout_width="match_parent"
-    app:fillViewport="true"
-    xmlns:app="http://schemas.android.com/apk/res/android"
-    tools:ignore="NamespaceTypo">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".AddGasto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        app:id="@+id/main"
-        app:layout_width="match_parent"
-        app:layout_height="match_parent">
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <androidx.appcompat.widget.Toolbar
-            app:id="@+id/my_toolbar"
-            app:layout_width="match_parent"
-            app:layout_height="wrap_content"
-            app:background="@drawable/background"
-            tools:ignore="MissingConstraints"
-            app2:titleTextColor="@color/dark_green"
-            app2:layout_constraintStart_toStartOf="parent"
-            app2:layout_constraintEnd_toEndOf="parent"
-            app2:layout_constraintTop_toTopOf="parent"/>
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:titleTextColor="@color/dark_green" />
 
         <EditText
-            app:id="@+id/editData"
+            android:id="@+id/editData"
             style="@style/Edit_Text_Add"
-            app:drawableStart="@drawable/ic_calendar"
-            app:drawablePadding="5dp"
-            app:hint="00 / 00 / 0000"
-            app:inputType="date"
-            app:layout_marginEnd="200dp"
-            app:layout_marginTop="20dp"
-            app2:layout_constraintStart_toStartOf="@id/my_toolbar"
-            app2:layout_constraintEnd_toEndOf="@id/my_toolbar"
-            app2:layout_constraintTop_toBottomOf="@id/my_toolbar"/>
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="200dp"
+            android:drawableStart="@drawable/ic_calendar"
+            android:drawablePadding="5dp"
+            android:hint="00 / 00 / 0000"
+            android:inputType="date"
+            app:layout_constraintEnd_toEndOf="@id/my_toolbar"
+            app:layout_constraintStart_toStartOf="@id/my_toolbar"
+            app:layout_constraintTop_toBottomOf="@id/my_toolbar" />
 
         <EditText
-            app:id="@+id/editValor"
+            android:id="@+id/editValor"
             style="@style/Edit_Text_Add"
-            app:drawableStart="@drawable/ic_money"
-            app:drawablePadding="5dp"
-            app:hint="Valor R$"
-            app:inputType="numberDecimal"
-            app:layout_marginTop="20dp"
-            app:layout_marginStart="200dp"
-            app2:layout_constraintStart_toStartOf="@id/my_toolbar"
-            app2:layout_constraintEnd_toEndOf="@id/my_toolbar"
-            app2:layout_constraintTop_toBottomOf="@id/my_toolbar"/>
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="20dp"
+            android:drawableStart="@drawable/ic_money"
+            android:drawablePadding="5dp"
+            android:hint="Valor R$"
+            android:inputType="numberDecimal"
+            app:layout_constraintEnd_toEndOf="@id/my_toolbar"
+            app:layout_constraintStart_toStartOf="@id/my_toolbar"
+            app:layout_constraintTop_toBottomOf="@id/my_toolbar" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnAddGasto"
+            style="@style/Button"
+            android:layout_marginTop="20dp"
+            android:text="Adicionar Gasto"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editValor" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnAddFoto"
+            style="@style/Button"
+            android:layout_width="0dp"
+            android:layout_marginTop="16dp"
+            android:text="Adicionar comprovante"
+            app:layout_constraintEnd_toEndOf="@+id/btnAddGasto"
+            app:layout_constraintStart_toStartOf="@+id/btnAddGasto"
+            app:layout_constraintTop_toBottomOf="@id/btnAddGasto" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

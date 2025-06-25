@@ -1,6 +1,8 @@
 package com.example.gasteiapp;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
@@ -20,6 +22,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_FORMAPAGAMENTO = "forma_pagamento";
     private static final String COLUMN_CATEGORY = "category";
 
+    private static final String TABLE_USERS = "users";
+    private static final String COLUMN_USER_ID = "user_id";
+    private static final String COLUMN_USERNAME = "username";
+    private static final String COLUMN_PASSWORD = "password";
+
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
@@ -27,18 +34,103 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE " + TABLE_NAME + " (" + COLUMN_ID + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        COLUMN_DESCRIPTION + " TEXT, " +
-                        COLUMN_VALUE + " DECIMAL, " +
-                        COLUMN_DATE + " DATE, " +
-                        COLUMN_FORMAPAGAMENTO + " TEXT, " +
-                        COLUMN_CATEGORY + " TEXT);";
-        db.execSQL(query);
+        String query_users = "CREATE TABLE " + TABLE_USERS + " (" +
+                COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_USERNAME + " TEXT, " +
+                COLUMN_PASSWORD + " TEXT);";
+        db.execSQL(query_users);
+
+        String query_gastos = "CREATE TABLE " + TABLE_NAME + " (" +
+                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_DESCRIPTION + " TEXT, " +
+                COLUMN_VALUE + " DECIMAL, " +
+                COLUMN_DATE + " DATE, " +
+                COLUMN_FORMAPAGAMENTO + " TEXT, " +
+                COLUMN_CATEGORY + " TEXT, " +
+                "user_id INTEGER, " +
+                "FOREIGN KEY(user_id) REFERENCES " + TABLE_USERS + "(" + COLUMN_USER_ID + "));";
+        db.execSQL(query_gastos);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(" DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
         onCreate(db);
+    }
+
+    public boolean addUser(String username, String password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        // NOTE: Storing passwords in plain text is not secure.
+        // In a real application, you should hash and salt the password.
+        cv.put(COLUMN_USERNAME, username);
+        cv.put(COLUMN_PASSWORD, password);
+
+        long result = db.insert(TABLE_USERS, null, cv);
+        return result != -1;
+    }
+
+    public boolean checkUser(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = { COLUMN_USER_ID };
+        String selection = COLUMN_USERNAME + " = ?";
+        String[] selectionArgs = { username };
+        Cursor cursor = db.query(TABLE_USERS, columns, selection, selectionArgs, null, null, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count > 0;
+    }
+
+    public boolean checkUser(String username, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        // NOTE: This is not secure. Passwords should be hashed and compared.
+        String[] columns = { COLUMN_USER_ID };
+        String selection = COLUMN_USERNAME + " = ? AND " + COLUMN_PASSWORD + " = ?";
+        String[] selectionArgs = { username, password };
+        Cursor cursor = db.query(TABLE_USERS, columns, selection, selectionArgs, null, null, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count > 0;
+    }
+
+    public int getUserId(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = { COLUMN_USER_ID };
+        String selection = COLUMN_USERNAME + " = ?";
+        String[] selectionArgs = { username };
+        Cursor cursor = db.query(TABLE_USERS, columns, selection, selectionArgs, null, null, null);
+        int userId = -1;
+        if (cursor.moveToFirst()) {
+            userId = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_USER_ID));
+        }
+        cursor.close();
+        return userId;
+    }
+
+    public boolean addGasto(String description, double value, String date, String formaPagamento, String category, int userId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COLUMN_DESCRIPTION, description);
+        cv.put(COLUMN_VALUE, value);
+        cv.put(COLUMN_DATE, date);
+        cv.put(COLUMN_FORMAPAGAMENTO, formaPagamento);
+        cv.put(COLUMN_CATEGORY, category);
+        cv.put("user_id", userId);
+
+        long result = db.insert(TABLE_NAME, null, cv);
+        return result != -1;
+    }
+
+    public Cursor getGastosByUser(int userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE user_id = " + userId;
+        Cursor cursor = null;
+        if (db != null) {
+            cursor = db.rawQuery(query, null);
+        }
+        return cursor;
     }
 }
