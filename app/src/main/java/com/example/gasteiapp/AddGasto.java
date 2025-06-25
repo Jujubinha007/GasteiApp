@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.content.SharedPreferences;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +19,8 @@ import androidx.core.view.WindowInsetsCompat;
 public class AddGasto extends AppCompatActivity {
     Toolbar my_toolbar;
     private EditText editData, editValor;
-    private Button btnAddGasto, btnAddFoto;
+    private Button btnAddGasto;
+    private ImageButton btnAddFoto;
     private DatabaseHelper dbHelper;
 
     @Override
@@ -35,8 +37,7 @@ public class AddGasto extends AppCompatActivity {
         my_toolbar = findViewById(R.id.my_toolbar);
         editData = findViewById(R.id.editData);
         editValor = findViewById(R.id.editValor);
-        btnAddGasto = findViewById(R.id.btnAddGasto);
-        btnAddFoto = findViewById(R.id.btnAddFoto);
+
         dbHelper = new DatabaseHelper(this);
 
         setSupportActionBar(my_toolbar);
@@ -44,6 +45,9 @@ public class AddGasto extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Corrected this line
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
         }
+
+        btnAddGasto = findViewById(R.id.btnSalvar);
+        btnAddFoto = findViewById(R.id.btnEntrar);
 
         btnAddGasto.setOnClickListener(v -> {
             String date = editData.getText().toString();

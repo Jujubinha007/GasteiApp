@@ -2,12 +2,12 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:layout_height="match_parent"
-    app:layout_width="match_parent"
-    app:fillViewport="true"
-    xmlns:app="http://schemas.android.com/apk/res/android"
+    xmlns:app2="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:fillViewport="true"
     tools:ignore="NamespaceTypo"
-    app:importantForAccessibility="no">
+    android:importantForAccessibility="no">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
@@ -25,45 +25,45 @@
             app:titleTextColor="@color/dark_green" />
 
         <TextView
-            app:id="@+id/txtTelaAdd"
-            app:layout_width="wrap_content"
-            app:layout_height="wrap_content"
-            app:text="Cadastrar Gasto"
-            app:textSize="30sp"
-            app:textStyle="bold"
-            app:textColor="@color/dark_green"
-            app:layout_marginTop="15dp"
+            android:id="@+id/txtTelaAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cadastrar Gasto"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:textColor="@color/dark_green"
+            android:layout_marginTop="15dp"
             app2:layout_constraintStart_toStartOf="parent"
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/my_toolbar"/>
 
         <!-- Coluna 1: Categoria -->
         <LinearLayout
-            app:id="@+id/coluna1"
-            app:layout_width="180dp"
-            app:layout_height="85dp"
-            app:layout_marginStart="20dp"
-            app:layout_marginTop="20dp"
-            app:orientation="vertical"
+            android:id="@+id/coluna1"
+            android:layout_width="180dp"
+            android:layout_height="85dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
             app2:layout_constraintStart_toStartOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/txtTelaAdd">
 
             <TextView
-                app:id="@+id/txtCategoria"
-                app:layout_width="wrap_content"
-                app:layout_height="wrap_content"
-                app:layout_marginStart="5dp"
-                app:text="Categoria"
-                app:textColor="@color/dark_green"
-                app:textSize="15sp"
-                app:textStyle="bold" />
+                android:id="@+id/txtCategoria"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="Categoria"
+                android:textColor="@color/dark_green"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <Spinner
-                app:id="@+id/spinnerCategoria"
+                android:id="@+id/spinnerCategoria"
                 style="@style/Edit_Text_Add"
-                app:layout_width="match_parent"
-                app:layout_height="wrap_content"
-                app:entries="@array/categorias_array"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/categorias_array"
                 app2:layout_constraintStart_toStartOf="parent"
                 app2:layout_constraintTop_toBottomOf="@id/txtCategoria"
                 app2:layout_constraintEnd_toEndOf="parent"/>
@@ -71,31 +71,31 @@
 
         <!-- Coluna 2: Forma de pagamento-->
         <LinearLayout
-            app:id="@+id/coluna2"
-            app:layout_width="180dp"
-            app:layout_height="85dp"
-            app:layout_marginTop="20dp"
-            app:layout_marginEnd="20dp"
-            app:orientation="vertical"
+            android:id="@+id/coluna2"
+            android:layout_width="180dp"
+            android:layout_height="85dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="vertical"
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/txtTelaAdd">
 
             <TextView
-                app:id="@+id/txtFmPagamento"
-                app:layout_width="wrap_content"
-                app:layout_height="wrap_content"
-                app:layout_marginStart="5dp"
-                app:text="Forma de pagamento"
-                app:textColor="@color/dark_green"
-                app:textSize="15sp"
-                app:textStyle="bold" />
+                android:id="@+id/txtFmPagamento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="Forma de pagamento"
+                android:textColor="@color/dark_green"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <Spinner
-                app:id="@+id/spinnerFmPagamento"
+                android:id="@+id/spinnerFmPagamento"
                 style="@style/Edit_Text_Add"
-                app:layout_width="match_parent"
-                app:layout_height="wrap_content"
-                app:entries="@array/pagamento_array"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/pagamento_array"
                 app2:layout_constraintStart_toStartOf="parent"
                 app2:layout_constraintTop_toBottomOf="@id/txtCategoria"
                 app2:layout_constraintEnd_toEndOf="parent"/>
@@ -103,31 +103,32 @@
 
         <!-- Coluna 3: data -->
         <LinearLayout
-            app:id="@+id/coluna3"
-            app:layout_width="180dp"
-            app:layout_height="85dp"
-            app:layout_marginStart="20dp"
-            app:layout_marginTop="5dp"
-            app:orientation="vertical"
+            android:id="@+id/coluna3"
+            android:layout_width="180dp"
+            android:layout_height="85dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
             app2:layout_constraintStart_toStartOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/coluna1">
 
             <TextView
-                app:id="@+id/txtData"
-                app:layout_width="wrap_content"
-                app:layout_height="wrap_content"
-                app:layout_marginStart="5dp"
-                app:text="Data do gasto"
-                app:textColor="@color/dark_green"
-                app:textSize="15sp"
-                app:textStyle="bold" />
+                android:id="@+id/txtData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="Data do gasto"
+                android:textColor="@color/dark_green"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <EditText
+                android:id="@+id/editData"
                 style="@style/Edit_Text_Add"
-                app:layout_width="match_parent"
-                app:layout_height="wrap_content"
-                app:drawableStart="@drawable/ic_calendar"
-                app:hint="00 / 00 / 0000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_calendar"
+                android:hint="00 / 00 / 0000"
                 app2:layout_constraintStart_toStartOf="parent"
                 app2:layout_constraintTop_toBottomOf="@id/spinnerCategoria"
                 app2:layout_constraintEnd_toEndOf="parent"/>
@@ -135,30 +136,31 @@
 
         <!-- Coluna 4: valor -->
         <LinearLayout
-            app:id="@+id/coluna4"
-            app:layout_width="180dp"
-            app:layout_height="85dp"
-            app:layout_marginEnd="20dp"
-            app:layout_marginTop="5dp"
-            app:orientation="vertical"
+            android:id="@+id/coluna4"
+            android:layout_width="180dp"
+            android:layout_height="85dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/coluna2">
 
             <TextView
-                app:id="@+id/txtValor"
-                app:layout_width="wrap_content"
-                app:layout_height="wrap_content"
-                app:layout_marginStart="5dp"
-                app:text="Valor R$"
-                app:textColor="@color/dark_green"
-                app:textSize="15sp"
-                app:textStyle="bold" />
+                android:id="@+id/txtValor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="Valor R$"
+                android:textColor="@color/dark_green"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <EditText
+                android:id="@+id/editValor"
                 style="@style/Edit_Text_Add"
-                app:layout_width="match_parent"
-                app:layout_height="wrap_content"
-                app:drawableStart="@drawable/ic_money"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_money"
                 app2:layout_constraintStart_toStartOf="parent"
                 app2:layout_constraintTop_toBottomOf="@id/spinnerCategoria"
                 app2:layout_constraintEnd_toEndOf="parent"/>
@@ -166,43 +168,43 @@
 
         <!-- Coluna 5: descricao -->
         <LinearLayout
-            app:id="@+id/coluna5"
-            app:layout_width="match_parent"
-            app:layout_height="100dp"
-            app:layout_marginStart="20dp"
-            app:layout_marginEnd="20dp"
-            app:layout_marginTop="5dp"
-            app:orientation="vertical"
+            android:id="@+id/coluna5"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintStart_toStartOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/coluna3">
 
             <TextView
-                app:id="@+id/txtDescricao"
-                app:layout_width="match_parent"
-                app:layout_height="wrap_content"
-                app:layout_marginStart="5dp"
-                app:layout_marginTop="5dp"
-                app:text="Descrição"
-                app:textColor="@color/dark_green"
-                app:textSize="15sp"
-                app:textStyle="bold"
+                android:id="@+id/txtDescricao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:text="Descrição"
+                android:textColor="@color/dark_green"
+                android:textSize="15sp"
+                android:textStyle="bold"
                 app2:layout_constraintEnd_toEndOf="parent"
                 app2:layout_constraintStart_toStartOf="parent"
                 app2:layout_constraintTop_toBottomOf="@id/coluna5" />
 
             <EditText
                 style="@style/Edit_Text_Add"
-                app:layout_width="match_parent"
-                app:layout_height="wrap_content"
-                app:hint="Digite aqui..."
-                app:inputType="textMultiLine"
-                app:gravity="top|start"
-                app:lines="4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Digite aqui..."
+                android:inputType="textMultiLine"
+                android:gravity="top|start"
+                android:lines="4"
                 app:maxLines="6"
-                app:maxLength="200"
-                app:scrollbars="vertical"
-                app:overScrollMode="always"
+                android:maxLength="200"
+                android:scrollbars="vertical"
+                android:overScrollMode="always"
                 app2:layout_constraintEnd_toEndOf="@id/coluna5"
                 app2:layout_constraintStart_toStartOf="@id/coluna5"
                 app2:layout_constraintTop_toBottomOf="@id/txtDescricao" />
@@ -210,31 +212,31 @@
 
         <!-- Coluna 6: comprovante -->
         <LinearLayout
-            app:id="@+id/coluna6"
-            app:layout_width="280dp"
-            app:layout_height="85dp"
-            app:layout_marginStart="20dp"
-            app:layout_marginTop="5dp"
-            app:orientation="vertical"
+            android:id="@+id/coluna6"
+            android:layout_width="280dp"
+            android:layout_height="85dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
             app2:layout_constraintStart_toStartOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/coluna5">
 
             <TextView
-                app:id="@+id/txtComprovante"
-                app:layout_width="wrap_content"
-                app:layout_height="wrap_content"
-                app:layout_marginStart="5dp"
-                app:layout_marginTop="10dp"
-                app:text="Comprovante"
-                app:textColor="@color/dark_green"
-                app:textSize="15sp"
-                app:textStyle="bold" />
+                android:id="@+id/txtComprovante"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:text="Comprovante"
+                android:textColor="@color/dark_green"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <EditText
                 style="@style/Edit_Text_Add"
-                app:layout_width="match_parent"
-                app:layout_height="wrap_content"
-                app:hint="Tire uma foto..."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Tire uma foto..."
                 app2:layout_constraintEnd_toEndOf="@id/coluna7"
                 app2:layout_constraintStart_toStartOf="parent"
                 app2:layout_constraintTop_toBottomOf="@id/txtComprovante" />
@@ -242,70 +244,45 @@
 
         <!-- Coluna 7: valor -->
         <LinearLayout
-            app:id="@+id/coluna7"
-            app:layout_width="80dp"
-            app:layout_height="wrap_content"
-            app:layout_marginTop="35dp"
-            app:layout_marginEnd="10dp"
-            app:orientation="vertical"
+            android:id="@+id/coluna7"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="vertical"
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintStart_toEndOf="@id/coluna6"
             app2:layout_constraintTop_toBottomOf="@id/coluna5">
 
             <ImageButton
-                app:id="@+id/btnEntrar"
+                android:id="@+id/btnEntrar"
                 style="@style/Button_Camera"
-                app:src="@drawable/camera"
-                app:padding="8dp"
+                android:src="@drawable/camera"
+                android:padding="8dp"
                 app2:layout_constraintEnd_toEndOf="@id/coluna7"
                 app2:layout_constraintStart_toStartOf="@id/coluna7"
                 app2:layout_constraintTop_toBottomOf="@id/coluna5" />
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
-            app:id="@+id/btnSalvar"
+            android:id="@+id/btnSalvar"
             style="@style/Button_Cadastro"
-            app:text="Salvar"
+            android:text="Salvar"
             app:background="@drawable/button"
             app2:layout_constraintStart_toStartOf="parent"
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/coluna7"/>
 
         <androidx.appcompat.widget.AppCompatButton
-            app:id="@+id/btnLimpar"
+            android:id="@+id/btnLimpar"
             style="@style/Button_Cadastro"
-            app:text="Limpar"
+            android:text="Limpar"
             app:background="@drawable/button"
             app:backgroundTint="@color/light_green"
             app2:layout_constraintStart_toStartOf="parent"
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/btnSalvar"/>
 
-
-
-
-
-
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnAddGasto"
-            style="@style/Button"
-            android:layout_marginTop="20dp"
-            android:text="Adicionar Gasto"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/editValor" />
-
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnAddFoto"
-            style="@style/Button"
-            android:layout_width="0dp"
-            android:layout_marginTop="16dp"
-            android:text="Adicionar comprovante"
-            app:layout_constraintEnd_toEndOf="@+id/btnAddGasto"
-            app:layout_constraintStart_toStartOf="@+id/btnAddGasto"
-            app:layout_constraintTop_toBottomOf="@id/btnAddGasto" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
