@@ -3,4 +3,30 @@
     <string name="entrar">ENTRAR</string>
     <string name="naotem_conta">Não tem uma conta? <u>Cadastrar-se</u></string>
     <string name="cadastrar">CADASTRAR</string>
+
+    <string-array name="categorias_array">
+        <item>Alimentação</item>
+        <item>Transporte</item>
+        <item>Moradia</item>
+        <item>Educação</item>
+        <item>Saúde</item>
+        <item>Entretenimento</item>
+        <item>Vestuário</item>
+        <item>Despesas domésticas</item>
+        <item>Viagens</item>
+        <item>Imprevistos</item>
+        <item>Assinaturas</item>
+        <item>Investimentos</item>
+        <item>Doações</item>
+        <item>Outros</item>
+    </string-array>
+
+    <string-array name="pagamento_array">
+        <item>Dinheiro</item>
+        <item>Cartão de crédito</item>
+        <item>Cartão de débito</item>
+        <item>Pix</item>
+        <item>Boleto</item>
+    </string-array>
+
 </resources>
