@@ -267,24 +267,47 @@
                 app2:layout_constraintTop_toBottomOf="@id/coluna5" />
         </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnLimpar"
-            style="@style/Button_Cadastro"
-            android:text="Limpar"
-            app:background="@drawable/button"
-            app:backgroundTint="@color/light_green"
-            app2:layout_constraintStart_toStartOf="parent"
-            app2:layout_constraintEnd_toEndOf="parent"
-            app2:layout_constraintTop_toBottomOf="@id/coluna7"/>
+        <ImageView
+            android:id="@+id/imagePreview"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            android:scaleType="centerCrop"
+            app:layout_constraintTop_toBottomOf="@id/coluna7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnSalvar"
-            style="@style/Button_Cadastro"
-            android:text="Salvar"
-            app:background="@drawable/button"
-            app2:layout_constraintStart_toStartOf="parent"
-            app2:layout_constraintEnd_toEndOf="parent"
-            app2:layout_constraintTop_toBottomOf="@id/btnLimpar"/>
+        <LinearLayout
+            android:id="@+id/buttons_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imagePreview">
+
+            <Button
+                android:id="@+id/btnLimpar"
+                style="@style/Button_Cadastro"
+                android:text="Limpar"
+                app:background="@drawable/button"
+                app:backgroundTint="@color/light_green"
+                app2:layout_constraintEnd_toEndOf="parent"
+                app2:layout_constraintStart_toStartOf="parent"
+                app2:layout_constraintTop_toBottomOf="parent"/>
+
+            <Button
+                android:id="@+id/btnSalvar"
+                style="@style/Button_Cadastro"
+                android:text="Salvar"
+                app:background="@drawable/button"
+                app2:layout_constraintEnd_toEndOf="parent"
+                app2:layout_constraintStart_toStartOf="parent"
+                app2:layout_constraintTop_toBottomOf="parent"/>
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

@@ -25,6 +25,7 @@ import java.util.Locale;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.chip.Chip;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,7 @@ public class Home extends AppCompatActivity {
     DatabaseHelper dbHelper;
     GastoAdapter gastoAdapter;
     private Chip chipCurrentMonth, chipLastMonth, chipAll;
+    private TextView tvGastosTitle;
 
     ArrayList<String> spinnerCategoria, spinnerFmPagamento, date, value, descricao;
 
@@ -65,6 +67,7 @@ public class Home extends AppCompatActivity {
         chipCurrentMonth = findViewById(R.id.chip_current_month);
         chipLastMonth = findViewById(R.id.chip_last_month);
         chipAll = findViewById(R.id.chip_all);
+        tvGastosTitle = findViewById(R.id.tvGastosTitle);
 
         chipCurrentMonth.setOnClickListener(v -> displayData("CURRENT_MONTH"));
         chipLastMonth.setOnClickListener(v -> displayData("LAST_MONTH"));
@@ -82,35 +85,106 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        displayData("ALL"); // Default to show all
+        displayData("ALL");
+        chipAll.setChecked(true);
     }
 
     private void displayData(String filter) {
+        // Update chip selection state
+        chipAll.setChecked("ALL".equals(filter));
+        chipCurrentMonth.setChecked("CURRENT_MONTH".equals(filter));
+        chipLastMonth.setChecked("LAST_MONTH".equals(filter));
+        
+        // Set title according to filter
+        if (tvGastosTitle != null) {
+            if ("CURRENT_MONTH".equals(filter)) {
+                tvGastosTitle.setText("Seus Gastos - Mês Atual");
+            } else if ("LAST_MONTH".equals(filter)) {
+                tvGastosTitle.setText("Seus Gastos - Mês Anterior");
+            } else {
+                tvGastosTitle.setText("Seus Gastos");
+            }
+        }
+
         SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
         int userId = sharedPreferences.getInt(MainActivity.USER_ID_KEY, -1);
 
         if (userId != -1) {
-            Cursor cursor = dbHelper.getGastosByUser(userId, filter);
-            // Clear existing data to avoid duplicates on resume
-            spinnerCategoria.clear();
-            spinnerFmPagamento.clear();
-            date.clear();
-            value.clear();
-            descricao.clear();
+            Cursor cursor = dbHelper.getGastosByUser(userId); // fetch all
+            String[] allColumns = cursor.getColumnNames();
+            android.database.MatrixCursor filteredCursor = new android.database.MatrixCursor(allColumns);
 
             if (cursor.getCount() == 0 ){
                 Toast.makeText(this, "Sem gastos para o filtro selecionado.", Toast.LENGTH_SHORT).show();
-            }else{
-                while (cursor.moveToNext()){
-                    spinnerCategoria.add(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CATEGORY)));
-                    spinnerFmPagamento.add(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_FORMAPAGAMENTO)));
-                    String dateFromDb = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATE));
-                    date.add(formatDateForDisplay(dateFromDb));
-                    value.add(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_VALUE)));
-                    descricao.add(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESCRIPTION)));
+            } else {
+                // Determine reference months
+                java.util.Calendar calNow = java.util.Calendar.getInstance();
+                int currentMonth = calNow.get(java.util.Calendar.MONTH); // 0-based
+                int currentYear = calNow.get(java.util.Calendar.YEAR);
+                calNow.add(java.util.Calendar.MONTH, -1);
+                int lastMonth = calNow.get(java.util.Calendar.MONTH);
+                int lastMonthYear = calNow.get(java.util.Calendar.YEAR);
+
+                while (cursor.moveToNext()) {
+                    spinnerCategoria.add(cursor.getString(cursor.getColumnIndexOrThrow("category")));
+                    spinnerFmPagamento.add(cursor.getString(cursor.getColumnIndexOrThrow("forma_pagamento")));
+                    String dateFromDb = cursor.getString(cursor.getColumnIndexOrThrow("date"));
+                    // parse date (supports both "yyyy-MM-dd" and "dd / MM / yyyy")
+                    java.util.Calendar cal = java.util.Calendar.getInstance();
+                    boolean parsed = false;
+                    for (String pattern : new String[]{"yyyy-MM-dd", "dd / MM / yyyy", "dd/MM/yyyy"}) {
+                        try {
+                            java.text.DateFormat df = new java.text.SimpleDateFormat(pattern, java.util.Locale.getDefault());
+                            cal.setTime(df.parse(dateFromDb));
+                            parsed = true;
+                            break;
+                        } catch (Exception ignored) {}
+                    }
+
+                    boolean include = true;
+                    if (parsed) {
+                        int m = cal.get(java.util.Calendar.MONTH);
+                        int y = cal.get(java.util.Calendar.YEAR);
+                        if ("CURRENT_MONTH".equals(filter)) {
+                            include = (m == currentMonth && y == currentYear);
+                        } else if ("LAST_MONTH".equals(filter)) {
+                            include = (m == lastMonth && y == lastMonthYear);
+                        }
+                    } else {
+                        // if can't parse, include only for ALL
+                        include = "ALL".equals(filter);
+                    }
+
+                    if (include) {
+                        // add to lists (optional) and filteredCursor
+                        spinnerCategoria.add(cursor.getString(cursor.getColumnIndexOrThrow("category")));
+                        spinnerFmPagamento.add(cursor.getString(cursor.getColumnIndexOrThrow("forma_pagamento")));
+                        date.add(formatDateForDisplay(dateFromDb));
+                        value.add(cursor.getString(cursor.getColumnIndexOrThrow("value")));
+                        descricao.add(cursor.getString(cursor.getColumnIndexOrThrow("description")));
+
+                        Object[] rowData = new Object[allColumns.length];
+                        for (int i = 0; i < allColumns.length; i++) {
+                            int idx = cursor.getColumnIndexOrThrow(allColumns[i]);
+                            int type = cursor.getType(idx);
+                            switch (type) {
+                                case android.database.Cursor.FIELD_TYPE_INTEGER:
+                                    rowData[i] = cursor.getInt(idx);
+                                    break;
+                                case android.database.Cursor.FIELD_TYPE_FLOAT:
+                                    rowData[i] = cursor.getDouble(idx);
+                                    break;
+                                case android.database.Cursor.FIELD_TYPE_STRING:
+                                default:
+                                    rowData[i] = cursor.getString(idx);
+                                    break;
+                            }
+                        }
+                        filteredCursor.addRow(rowData);
+                    }
                 }
             }
-            gastoAdapter = new GastoAdapter(this, cursor);
+            gastoAdapter = new GastoAdapter(this, filteredCursor);
             recyclerView.setAdapter(gastoAdapter);
             gastoAdapter.notifyDataSetChanged();
 

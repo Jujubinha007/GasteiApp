@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private Context context;
     private static final String DATABASE_NAME = "GasteiApp.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static final String TABLE_NAME = "gastos";
     private static final String COLUMN_ID = "id";
@@ -22,6 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_DATE = "date";
     private static final String COLUMN_FORMAPAGAMENTO = "forma_pagamento";
     private static final String COLUMN_CATEGORY = "category";
+    private static final String COLUMN_IMAGE_PATH = "image_path";
 
     private static final String TABLE_USERS = "users";
     private static final String COLUMN_USER_ID = "user_id";
@@ -48,6 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_DATE + " DATE, " +
                 COLUMN_FORMAPAGAMENTO + " TEXT, " +
                 COLUMN_CATEGORY + " TEXT, " +
+                COLUMN_IMAGE_PATH + " TEXT, " +
                 "user_id INTEGER, " +
                 "FOREIGN KEY(user_id) REFERENCES " + TABLE_USERS + "(" + COLUMN_USER_ID + "));";
         db.execSQL(query_gastos);
@@ -55,9 +57,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
-        onCreate(db);
+        if (oldVersion < 2) {
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_IMAGE_PATH + " TEXT");
+        }
     }
 
     public boolean addUser(String username, String password) {
@@ -110,7 +112,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return userId;
     }
 
-    public boolean addGasto(String description, double value, String date, String formaPagamento, String category, int userId) {
+    public boolean addGasto(String category, double value, String date, String formaPagamento, String description, int userId, String imagePath) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -119,10 +121,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_DATE, date);
         cv.put(COLUMN_FORMAPAGAMENTO, formaPagamento);
         cv.put(COLUMN_CATEGORY, category);
+        cv.put(COLUMN_IMAGE_PATH, imagePath);
         cv.put("user_id", userId);
 
         long result = db.insert(TABLE_NAME, null, cv);
         return result != -1;
+    }
+
+    public boolean addGasto(String category, double value, String date, String formaPagamento, String description, int userId) {
+        return addGasto(category, value, date, formaPagamento, description, userId, null);
     }
 
     public Cursor getGastosByUser(int userId) {
@@ -156,7 +163,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public boolean updateGasto(int id, String description, double value, String date, String formaPagamento, String category) {
+    public boolean updateGasto(int id, String description, double value, String date, String formaPagamento, String category, String imagePath) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_DESCRIPTION, description);
@@ -164,8 +171,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_DATE, date);
         cv.put(COLUMN_FORMAPAGAMENTO, formaPagamento);
         cv.put(COLUMN_CATEGORY, category);
+        cv.put(COLUMN_IMAGE_PATH, imagePath);
         int rows = db.update(TABLE_NAME, cv, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
         return rows > 0;
+    }
+
+    public boolean updateGasto(int id, String description, double value, String date, String formaPagamento, String category) {
+        return updateGasto(id, description, value, date, formaPagamento, category, null);
     }
 
     public boolean deleteGasto(int id) {
