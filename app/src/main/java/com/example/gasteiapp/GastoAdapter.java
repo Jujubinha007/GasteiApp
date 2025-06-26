@@ -3,6 +3,7 @@ package com.example.gasteiapp;
 import static android.text.TextUtils.indexOf;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.view.LayoutInflater;
@@ -15,10 +16,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHolder> {
 
     private Context mContext;
     private Cursor mCursor;
+    private OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onItemClick(Cursor cursor);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public GastoAdapter(Context context, Cursor cursor) {
         mContext = context;
@@ -26,27 +39,22 @@ public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHol
     }
 
     public class GastoViewHolder extends RecyclerView.ViewHolder {
-        public Spinner spinnerCategoria, spinnerFmPagamentos;
+        public TextView categoryText, paymentMethodText;
         public TextView descriptionText, valueText, dateText;
 
         public GastoViewHolder(@NonNull View itemView) {
             super(itemView);
-            spinnerCategoria = itemView.findViewById(R.id.spinnerCategoria);
-            spinnerFmPagamentos = itemView.findViewById(R.id.spinnerFmPagamento);
+            categoryText = itemView.findViewById(R.id.gasto_category);
+            paymentMethodText = itemView.findViewById(R.id.gasto_payment_method);
             descriptionText = itemView.findViewById(R.id.gasto_description);
             valueText = itemView.findViewById(R.id.gasto_value);
             dateText = itemView.findViewById(R.id.gasto_date);
-
-            ArrayAdapter<CharSequence> catAdapter = ArrayAdapter.createFromResource(
-                    mContext, R.array.categorias_array, android.R.layout.simple_spinner_item);
-            catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinnerCategoria.setAdapter(catAdapter);
-
-            ArrayAdapter<CharSequence> pagAdapter = ArrayAdapter.createFromResource(
-                    mContext, R.array.pagamento_array, android.R.layout.simple_spinner_item);
-            pagAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinnerFmPagamentos.setAdapter(pagAdapter);
-
+            itemView.setOnClickListener(v -> {
+                if (listener != null && getAdapterPosition() != RecyclerView.NO_POSITION) {
+                    mCursor.moveToPosition(getAdapterPosition());
+                    listener.onItemClick(mCursor);
+                }
+            });
         }
     }
 
@@ -71,10 +79,12 @@ public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHol
         String forma_pagamento  = mCursor.getString(mCursor.getColumnIndexOrThrow("forma_pagamento"));
 
         holder.descriptionText.setText(description);
-        holder.valueText.setText(String.valueOf(value));
-        holder.dateText.setText(date);holder.spinnerCategoria.setSelection(indexOf(R.array.categorias_array, category));
-        holder.spinnerFmPagamentos.setSelection(indexOf(R.array.pagamento_array, forma_pagamento));
-        }
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        holder.valueText.setText(currencyFormat.format(value));
+        holder.dateText.setText(date);
+        holder.categoryText.setText(category);
+        holder.paymentMethodText.setText(forma_pagamento);
+    }
 
     @Override
     public int getItemCount() {

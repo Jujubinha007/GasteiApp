@@ -127,11 +127,13 @@
                 style="@style/Edit_Text_Add"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="true"
                 android:drawableStart="@drawable/ic_calendar"
+                android:focusable="false"
                 android:hint="00 / 00 / 0000"
+                app2:layout_constraintEnd_toEndOf="parent"
                 app2:layout_constraintStart_toStartOf="parent"
-                app2:layout_constraintTop_toBottomOf="@id/spinnerCategoria"
-                app2:layout_constraintEnd_toEndOf="parent"/>
+                app2:layout_constraintTop_toBottomOf="@id/spinnerCategoria" />
         </LinearLayout>
 
         <!-- Coluna 4: valor -->
@@ -266,15 +268,6 @@
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnSalvar"
-            style="@style/Button_Cadastro"
-            android:text="Salvar"
-            app:background="@drawable/button"
-            app2:layout_constraintStart_toStartOf="parent"
-            app2:layout_constraintEnd_toEndOf="parent"
-            app2:layout_constraintTop_toBottomOf="@id/coluna7"/>
-
-        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnLimpar"
             style="@style/Button_Cadastro"
             android:text="Limpar"
@@ -282,8 +275,16 @@
             app:backgroundTint="@color/light_green"
             app2:layout_constraintStart_toStartOf="parent"
             app2:layout_constraintEnd_toEndOf="parent"
-            app2:layout_constraintTop_toBottomOf="@id/btnSalvar"/>
+            app2:layout_constraintTop_toBottomOf="@id/coluna7"/>
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSalvar"
+            style="@style/Button_Cadastro"
+            android:text="Salvar"
+            app:background="@drawable/button"
+            app2:layout_constraintStart_toStartOf="parent"
+            app2:layout_constraintEnd_toEndOf="parent"
+            app2:layout_constraintTop_toBottomOf="@id/btnLimpar"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

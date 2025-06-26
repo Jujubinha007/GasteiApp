@@ -134,4 +134,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return cursor;
     }
+
+    public boolean updateGasto(int id, String description, double value, String date, String formaPagamento, String category) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_DESCRIPTION, description);
+        cv.put(COLUMN_VALUE, value);
+        cv.put(COLUMN_DATE, date);
+        cv.put(COLUMN_FORMAPAGAMENTO, formaPagamento);
+        cv.put(COLUMN_CATEGORY, category);
+        int rows = db.update(TABLE_NAME, cv, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+        return rows > 0;
+    }
+
+    public boolean deleteGasto(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rows = db.delete(TABLE_NAME, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+        return rows > 0;
+    }
 }

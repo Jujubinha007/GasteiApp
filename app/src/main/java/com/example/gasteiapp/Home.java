@@ -76,8 +76,13 @@ public class Home extends AppCompatActivity {
 
         if (userId != -1) {
             Cursor cursor = dbHelper.getGastosByUser(userId);
-            gastoAdapter = new GastoAdapter(this, cursor);
-            recyclerView.setAdapter(gastoAdapter);
+            // Clear existing data to avoid duplicates on resume
+            spinnerCategoria.clear();
+            spinnerFmPagamento.clear();
+            date.clear();
+            value.clear();
+            descricao.clear();
+
             if (cursor.getCount() == 0 ){
                 Toast.makeText(this, "Sem gastos cadastrados.", Toast.LENGTH_SHORT).show();
             }else{
@@ -87,10 +92,33 @@ public class Home extends AppCompatActivity {
                     date.add(cursor.getString(2));
                     value.add(cursor.getString(3));
                     descricao.add(cursor.getString(4));
-
-                    displayData();
                 }
             }
+            gastoAdapter = new GastoAdapter(this, cursor);
+            recyclerView.setAdapter(gastoAdapter);
+            gastoAdapter.notifyDataSetChanged();
+
+            gastoAdapter.setOnItemClickListener(new GastoAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(Cursor c) {
+                    int id = c.getInt(c.getColumnIndexOrThrow("id"));
+                    String description = c.getString(c.getColumnIndexOrThrow("description"));
+                    double value = c.getDouble(c.getColumnIndexOrThrow("value"));
+                    String date = c.getString(c.getColumnIndexOrThrow("date"));
+                    String category = c.getString(c.getColumnIndexOrThrow("category"));
+                    String formaPagamento = c.getString(c.getColumnIndexOrThrow("forma_pagamento"));
+
+                    Intent intent = new Intent(Home.this, AddGasto.class);
+                    intent.putExtra("edit_mode", true);
+                    intent.putExtra("gasto_id", id);
+                    intent.putExtra("description", description);
+                    intent.putExtra("value", value);
+                    intent.putExtra("date", date);
+                    intent.putExtra("category", category);
+                    intent.putExtra("forma_pagamento", formaPagamento);
+                    startActivity(intent);
+                }
+            });
         }
     }
 
