@@ -236,6 +236,94 @@
             </FrameLayout>
         </LinearLayout>
 
+        <!-- Coluna 7: Location -->
+        <LinearLayout
+            android:id="@+id/coluna7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            app2:layout_constraintEnd_toEndOf="parent"
+            app2:layout_constraintStart_toStartOf="parent"
+            app2:layout_constraintTop_toBottomOf="@id/coluna6">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="Local (opcional)"
+                android:textColor="@color/dark_green"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <!-- Location buttons row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="start|center_vertical">
+
+                <Button
+                    android:id="@+id/btnGetLocation"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:text="Local Atual"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/dark_green"
+                    android:textColor="@android:color/white" />
+
+                <Button
+                    android:id="@+id/btnSelectPlace"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="Locais Salvos"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/light_green"
+                    android:textColor="@color/dark_green" />
+            </LinearLayout>
+
+            <!-- Location display -->
+            <EditText
+                android:id="@+id/editLocation"
+                style="@style/Edit_Text_Add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Digite o local manualmente ou use GPS"
+                android:inputType="text" />
+
+            <!-- Save place option (visible when GPS location is set) -->
+            <LinearLayout
+                android:id="@+id/layoutSavePlace"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                android:gravity="center_vertical">
+
+                <CheckBox
+                    android:id="@+id/checkSavePlace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/dark_green" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Salvar este local para uso futuro"
+                    android:textColor="@color/dark_green"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
+
         <!-- Coluna 5: descricao -->
         <LinearLayout
             android:id="@+id/coluna5"
@@ -247,7 +335,7 @@
             android:orientation="vertical"
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintStart_toStartOf="parent"
-            app2:layout_constraintTop_toBottomOf="@id/coluna6">
+            app2:layout_constraintTop_toBottomOf="@id/coluna7">
 
             <TextView
                 android:id="@+id/txtDescricao"
@@ -283,7 +371,7 @@
 
         <!-- Coluna 7: Botoes -->
         <LinearLayout
-            android:id="@+id/coluna7"
+            android:id="@+id/coluna8"
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_marginStart="20dp"
@@ -303,7 +391,7 @@
                 app:backgroundTint="@color/light_green"
                 app2:layout_constraintStart_toStartOf="parent"
                 app2:layout_constraintEnd_toEndOf="parent"
-                app2:layout_constraintTop_toBottomOf="@id/coluna7"/>
+                app2:layout_constraintTop_toBottomOf="@id/coluna8"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnSalvar"

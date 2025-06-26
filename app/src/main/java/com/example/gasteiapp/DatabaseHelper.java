@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private Context context;
     private static final String DATABASE_NAME = "GasteiApp.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     private static final String TABLE_NAME = "gastos";
     private static final String COLUMN_ID = "id";
@@ -23,11 +23,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_FORMAPAGAMENTO = "forma_pagamento";
     private static final String COLUMN_CATEGORY = "category";
     private static final String COLUMN_IMAGE_PATH = "image_path";
+    private static final String COLUMN_LATITUDE = "latitude";
+    private static final String COLUMN_LONGITUDE = "longitude";
+    private static final String COLUMN_LOCATION_NAME = "location_name";
 
     private static final String TABLE_USERS = "users";
     private static final String COLUMN_USER_ID = "user_id";
     private static final String COLUMN_USERNAME = "username";
     private static final String COLUMN_PASSWORD = "password";
+
+    private static final String TABLE_PLACES = "places";
+    private static final String COLUMN_PLACE_ID = "place_id";
+    private static final String COLUMN_PLACE_NAME = "place_name";
+    private static final String COLUMN_PLACE_LATITUDE = "place_latitude";
+    private static final String COLUMN_PLACE_LONGITUDE = "place_longitude";
+    private static final String COLUMN_PLACE_USER_ID = "place_user_id";
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -50,14 +60,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_FORMAPAGAMENTO + " TEXT, " +
                 COLUMN_CATEGORY + " TEXT, " +
                 COLUMN_IMAGE_PATH + " TEXT, " +
+                COLUMN_LATITUDE + " REAL, " +
+                COLUMN_LONGITUDE + " REAL, " +
+                COLUMN_LOCATION_NAME + " TEXT, " +
                 "user_id INTEGER, " +
                 "FOREIGN KEY(user_id) REFERENCES " + TABLE_USERS + "(" + COLUMN_USER_ID + "));";
         db.execSQL(query_gastos);
+
+        String query_places = "CREATE TABLE " + TABLE_PLACES + " (" +
+                COLUMN_PLACE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_PLACE_NAME + " TEXT, " +
+                COLUMN_PLACE_LATITUDE + " REAL, " +
+                COLUMN_PLACE_LONGITUDE + " REAL, " +
+                COLUMN_PLACE_USER_ID + " INTEGER, " +
+                "FOREIGN KEY(" + COLUMN_PLACE_USER_ID + ") REFERENCES " + TABLE_USERS + "(" + COLUMN_USER_ID + "));";
+        db.execSQL(query_places);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 4) {
+            // Add image_path column if it doesn't exist
             Cursor cursor = db.rawQuery("PRAGMA table_info(" + TABLE_NAME + ")", null);
             boolean imagePathColumnExists = false;
             if (cursor != null) {
@@ -77,6 +100,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_IMAGE_PATH + " TEXT");
             }
         }
+        
+        if (oldVersion < 5) {
+            // Add location columns to gastos table
+            try {
+                db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_LATITUDE + " REAL");
+                db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_LONGITUDE + " REAL");
+                db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_LOCATION_NAME + " TEXT");
+            } catch (Exception e) {
+                // Columns might already exist
+            }
+            
+            // Create places table
+            String query_places = "CREATE TABLE IF NOT EXISTS " + TABLE_PLACES + " (" +
+                    COLUMN_PLACE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN_PLACE_NAME + " TEXT, " +
+                    COLUMN_PLACE_LATITUDE + " REAL, " +
+                    COLUMN_PLACE_LONGITUDE + " REAL, " +
+                    COLUMN_PLACE_USER_ID + " INTEGER, " +
+                    "FOREIGN KEY(" + COLUMN_PLACE_USER_ID + ") REFERENCES " + TABLE_USERS + "(" + COLUMN_USER_ID + "));";
+            db.execSQL(query_places);
+        }
     }
 
     @Override
@@ -84,6 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Handle downgrade gracefully by recreating tables
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLACES);
         onCreate(db);
     }
 
@@ -137,7 +182,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return userId;
     }
 
-    public boolean addGasto(String category, double value, String date, String formaPagamento, String description, int userId, String imagePath) {
+    public boolean addGasto(String category, double value, String date, String formaPagamento, String description, int userId, String imagePath, Double latitude, Double longitude, String locationName) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -147,6 +192,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_FORMAPAGAMENTO, formaPagamento);
         cv.put(COLUMN_CATEGORY, category);
         cv.put(COLUMN_IMAGE_PATH, imagePath);
+        cv.put(COLUMN_LATITUDE, latitude);
+        cv.put(COLUMN_LONGITUDE, longitude);
+        cv.put(COLUMN_LOCATION_NAME, locationName);
         cv.put("user_id", userId);
 
         long result = db.insert(TABLE_NAME, null, cv);
@@ -154,7 +202,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean addGasto(String category, double value, String date, String formaPagamento, String description, int userId) {
-        return addGasto(category, value, date, formaPagamento, description, userId, null);
+        return addGasto(category, value, date, formaPagamento, description, userId, null, null, null, null);
     }
 
     public Cursor getGastosByUser(int userId) {
@@ -188,7 +236,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public boolean updateGasto(int id, String description, double value, String date, String formaPagamento, String category, String imagePath) {
+    public boolean updateGasto(int id, String description, double value, String date, String formaPagamento, String category, String imagePath, Double latitude, Double longitude, String locationName) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_DESCRIPTION, description);
@@ -197,17 +245,89 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_FORMAPAGAMENTO, formaPagamento);
         cv.put(COLUMN_CATEGORY, category);
         cv.put(COLUMN_IMAGE_PATH, imagePath);
+        cv.put(COLUMN_LATITUDE, latitude);
+        cv.put(COLUMN_LONGITUDE, longitude);
+        cv.put(COLUMN_LOCATION_NAME, locationName);
         int rows = db.update(TABLE_NAME, cv, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
         return rows > 0;
     }
 
     public boolean updateGasto(int id, String description, double value, String date, String formaPagamento, String category) {
-        return updateGasto(id, description, value, date, formaPagamento, category, null);
+        return updateGasto(id, description, value, date, formaPagamento, category, null, null, null, null);
     }
 
     public boolean deleteGasto(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         int rows = db.delete(TABLE_NAME, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
         return rows > 0;
+    }
+
+    // Place management methods
+    public boolean addPlace(String placeName, double latitude, double longitude, int userId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_PLACE_NAME, placeName);
+        cv.put(COLUMN_PLACE_LATITUDE, latitude);
+        cv.put(COLUMN_PLACE_LONGITUDE, longitude);
+        cv.put(COLUMN_PLACE_USER_ID, userId);
+        long result = db.insert(TABLE_PLACES, null, cv);
+        return result != -1;
+    }
+
+    public Cursor getUserPlaces(int userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_PLACES + " WHERE " + COLUMN_PLACE_USER_ID + " = " + userId;
+        return db.rawQuery(query, null);
+    }
+
+    public boolean deletePlace(int placeId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rows = db.delete(TABLE_PLACES, COLUMN_PLACE_ID + " = ?", new String[]{String.valueOf(placeId)});
+        return rows > 0;
+    }
+
+    public boolean updatePlace(int placeId, String placeName, double latitude, double longitude) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_PLACE_NAME, placeName);
+        cv.put(COLUMN_PLACE_LATITUDE, latitude);
+        cv.put(COLUMN_PLACE_LONGITUDE, longitude);
+        int rows = db.update(TABLE_PLACES, cv, COLUMN_PLACE_ID + " = ?", new String[]{String.valueOf(placeId)});
+        return rows > 0;
+    }
+
+    // Calculate distance between two coordinates using Haversine formula
+    public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371; // Radius of the earth in km
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+        return distance;
+    }
+
+    // Find nearby places within 50 meters
+    public String findNearbyPlace(double currentLat, double currentLon, int userId) {
+        Cursor cursor = getUserPlaces(userId);
+        String nearbyPlace = null;
+        
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                double placeLat = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PLACE_LATITUDE));
+                double placeLon = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PLACE_LONGITUDE));
+                String placeName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PLACE_NAME));
+                
+                double distance = calculateDistance(currentLat, currentLon, placeLat, placeLon);
+                if (distance <= 50) { // 50 meters radius
+                    nearbyPlace = placeName;
+                    break;
+                }
+            }
+            cursor.close();
+        }
+        return nearbyPlace;
     }
 }

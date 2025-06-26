@@ -205,6 +205,22 @@ public class Home extends AppCompatActivity {
                         imagePath = null;
                     }
 
+                    // Get location data safely
+                    String locationName = null;
+                    Double latitude = null;
+                    Double longitude = null;
+                    try {
+                        locationName = c.getString(c.getColumnIndexOrThrow("location_name"));
+                        int latIndex = c.getColumnIndexOrThrow("latitude");
+                        int lonIndex = c.getColumnIndexOrThrow("longitude");
+                        if (!c.isNull(latIndex) && !c.isNull(lonIndex)) {
+                            latitude = c.getDouble(latIndex);
+                            longitude = c.getDouble(lonIndex);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // Location columns don't exist yet
+                    }
+
                     Intent intent = new Intent(Home.this, AddGasto.class);
                     intent.putExtra("edit_mode", true);
                     intent.putExtra("gasto_id", id);
@@ -214,6 +230,11 @@ public class Home extends AppCompatActivity {
                     intent.putExtra("category", category);
                     intent.putExtra("forma_pagamento", formaPagamento);
                     intent.putExtra("image_path", imagePath);
+                    intent.putExtra("location_name", locationName);
+                    if (latitude != null && longitude != null) {
+                        intent.putExtra("latitude", latitude);
+                        intent.putExtra("longitude", longitude);
+                    }
                     startActivity(intent);
                 }
             });
