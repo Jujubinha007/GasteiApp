@@ -22,7 +22,7 @@
         android:elevation="2dp"
         android:text="Tirar Foto"
         android:textColor="@android:color/white"
-        app:backgroundTint="#1E8553"
+        android:backgroundTint="#1E8553"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

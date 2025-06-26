@@ -17,11 +17,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_NAME = "gastos";
     private static final String COLUMN_ID = "id";
-    private static final String COLUMN_DESCRIPTION = "description";
-    private static final String COLUMN_VALUE = "value";
-    private static final String COLUMN_DATE = "date";
-    private static final String COLUMN_FORMAPAGAMENTO = "forma_pagamento";
-    private static final String COLUMN_CATEGORY = "category";
+    public static final String COLUMN_DESCRIPTION = "description";
+    public static final String COLUMN_VALUE = "value";
+    public static final String COLUMN_DATE = "date";
+    public static final String COLUMN_FORMAPAGAMENTO = "forma_pagamento";
+    public static final String COLUMN_CATEGORY = "category";
 
     private static final String TABLE_USERS = "users";
     private static final String COLUMN_USER_ID = "user_id";

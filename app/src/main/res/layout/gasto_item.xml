@@ -3,12 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
-    android:layout_marginHorizontal="12dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="4dp"
-    android:backgroundTint="@android:color/white">
+    android:backgroundTint="@color/white"
+    app:strokeColor="@color/black"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,42 +16,43 @@
 
         <!-- Left: Info -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/gasto_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#222" />
-
-            <TextView
                 android:id="@+id/gasto_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/gasto_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 android:textSize="14sp"
-                android:textColor="#888"
                 android:layout_marginTop="2dp" />
 
             <TextView
                 android:id="@+id/gasto_payment_method"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="13sp"
+                android:layout_marginTop="1dp"
                 android:textColor="#B0B0B0"
-                android:layout_marginTop="1dp" />
+                android:textSize="13sp" />
         </LinearLayout>
 
         <!-- Right: Amount, Date, Arrow -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="end|center_vertical">
+
 
             <TextView
                 android:id="@+id/gasto_value"
@@ -73,6 +71,7 @@
                 android:textColor="#888"
                 android:gravity="end"
                 android:layout_marginTop="2dp" />
+        </LinearLayout>
 
             <ImageView
                 android:id="@+id/gasto_arrow"
@@ -80,9 +79,9 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_arrow_back"
                 android:rotation="180"
-                android:tint="#888"
-                android:layout_gravity="end"
-                android:layout_marginTop="8dp" />
-        </LinearLayout>
+                app:tint="@color/black"
+                android:layout_gravity="center" />
     </LinearLayout>
+
+
 </com.google.android.material.card.MaterialCardView> 

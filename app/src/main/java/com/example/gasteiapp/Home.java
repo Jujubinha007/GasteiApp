@@ -3,6 +3,10 @@ package com.example.gasteiapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import com.example.gasteiapp.R;
+
+
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
@@ -16,6 +20,7 @@ import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.database.Cursor;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.Button;
 import java.text.ParseException;
@@ -34,7 +39,9 @@ public class Home extends AppCompatActivity {
     Toolbar my_toolbar;
     DatabaseHelper dbHelper;
     GastoAdapter gastoAdapter;
-    private Chip chipCurrentMonth, chipLastMonth, chipAll;
+    //private Chip chipCurrentMonth, chipLastMonth, chipAll;
+
+    ImageButton btnFilter;
 
     ArrayList<String> spinnerCategoria, spinnerFmPagamento, date, value, descricao;
 
@@ -51,6 +58,10 @@ public class Home extends AppCompatActivity {
 
         my_toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(my_toolbar);
+
+        ImageButton btnFilter = findViewById(R.id.btnFilter);
+        btnFilter.setOnClickListener(v -> showFilterMenu(v));
+
         dbHelper = new DatabaseHelper(this);
         spinnerCategoria = new ArrayList<>();
         spinnerFmPagamento = new ArrayList<>();
@@ -62,13 +73,13 @@ public class Home extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         btnAdd = findViewById(R.id.btnAdd);
 
-        chipCurrentMonth = findViewById(R.id.chip_current_month);
+        /*chipCurrentMonth = findViewById(R.id.chip_current_month);
         chipLastMonth = findViewById(R.id.chip_last_month);
         chipAll = findViewById(R.id.chip_all);
 
         chipCurrentMonth.setOnClickListener(v -> displayData("CURRENT_MONTH"));
         chipLastMonth.setOnClickListener(v -> displayData("LAST_MONTH"));
-        chipAll.setOnClickListener(v -> displayData("ALL"));
+        chipAll.setOnClickListener(v -> displayData("ALL"));*/
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,4 +183,29 @@ public class Home extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void showFilterMenu(View anchor) {
+        PopupMenu popup = new PopupMenu(this, anchor);
+        popup.getMenuInflater().inflate(R.menu.menu_filters, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(menuItem -> {
+            int id = menuItem.getItemId();
+            if (id == R.id.filter_all) {
+                displayData("ALL");
+                return true;
+            } else if (id == R.id.filter_current_month) {
+                displayData("CURRENT_MONTH");
+                return true;
+            } else if (id == R.id.filter_last_month) {
+                displayData("LAST_MONTH");
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+
+        popup.show();
+    }
+
 }

@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/dark_green"
-        app:titleTextColor="@color/white"
-        app:title="Comprovante" />
+        android:titleTextColor="@color/white"
+        android:title="Comprovante" />
 
     <ImageView
         android:id="@+id/imageView"

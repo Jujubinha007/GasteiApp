@@ -72,6 +72,8 @@ public class AddGasto extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Corrected this line
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
+            my_toolbar.setTitleTextColor(getResources().getColor(R.color.dark_green));
+            setSupportActionBar(my_toolbar);
         }
 
         btnAddGasto = findViewById(R.id.btnSalvar);
@@ -138,11 +140,6 @@ public class AddGasto extends AppCompatActivity {
             });
         } else {
             // ---------- CREATE MODE CONFIG ----------
-            // btnLimpar is now the top button, should be gray
-            btnLimpar.setText("Limpar");
-            btnLimpar.setBackground(ContextCompat.getDrawable(this, R.drawable.button_background_gray));
-            btnLimpar.setTextColor(Color.BLACK);
-            btnLimpar.setBackgroundTintList(null);
             btnLimpar.setOnClickListener(v -> {
                 // Clear inputs
                 editDescricao.setText("");
@@ -151,12 +148,6 @@ public class AddGasto extends AppCompatActivity {
                 spinnerCategoria.setSelection(0);
                 spinnerFmPagamento.setSelection(0);
             });
-
-            // btnAddGasto is now the bottom button, should be dark green
-            btnAddGasto.setText("Salvar");
-            btnAddGasto.setBackground(ContextCompat.getDrawable(this, R.drawable.button_background_dark_green));
-            btnAddGasto.setTextColor(Color.WHITE);
-            btnAddGasto.setBackgroundTintList(null);
             btnAddGasto.setOnClickListener(v -> {
                 handleSaveOrUpdate(catAdapter, pagAdapter, false, -1);
             });
