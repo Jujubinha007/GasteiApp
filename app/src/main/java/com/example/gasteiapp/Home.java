@@ -16,8 +16,11 @@ import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.database.Cursor;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 public class Home extends AppCompatActivity {
     RecyclerView recyclerView;
@@ -25,6 +28,8 @@ public class Home extends AppCompatActivity {
     Toolbar my_toolbar;
     DatabaseHelper dbHelper;
     GastoAdapter gastoAdapter;
+
+    ArrayList<String> spinnerCategoria, spinnerFmPagamento, date, value, descricao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +44,13 @@ public class Home extends AppCompatActivity {
 
         my_toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(my_toolbar);
-
         dbHelper = new DatabaseHelper(this);
+        spinnerCategoria = new ArrayList<>();
+        spinnerFmPagamento = new ArrayList<>();
+        date = new ArrayList<>();
+        value = new ArrayList<>();
+        descricao = new ArrayList<>();
+
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         btnAdd = findViewById(R.id.btnAdd);
@@ -68,6 +78,19 @@ public class Home extends AppCompatActivity {
             Cursor cursor = dbHelper.getGastosByUser(userId);
             gastoAdapter = new GastoAdapter(this, cursor);
             recyclerView.setAdapter(gastoAdapter);
+            if (cursor.getCount() == 0 ){
+                Toast.makeText(this, "Sem gastos cadastrados.", Toast.LENGTH_SHORT).show();
+            }else{
+                while (cursor.moveToNext()){
+                    spinnerCategoria.add(cursor.getString(0));
+                    spinnerFmPagamento.add(cursor.getString(1));
+                    date.add(cursor.getString(2));
+                    value.add(cursor.getString(3));
+                    descricao.add(cursor.getString(4));
+
+                    displayData();
+                }
+            }
         }
     }
 
