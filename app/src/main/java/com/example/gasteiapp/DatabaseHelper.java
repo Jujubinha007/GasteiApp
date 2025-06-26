@@ -135,6 +135,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getGastosByUser(int userId, String filter) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE user_id = " + userId;
+
+        switch (filter) {
+            case "CURRENT_MONTH":
+                query += " AND strftime('%Y-%m', " + COLUMN_DATE + ") = strftime('%Y-%m', 'now')";
+                break;
+            case "LAST_MONTH":
+                query += " AND strftime('%Y-%m', " + COLUMN_DATE + ") = strftime('%Y-%m', 'now', '-1 month')";
+                break;
+            // "ALL" case needs no extra query modification
+        }
+
+        Cursor cursor = null;
+        if (db != null) {
+            cursor = db.rawQuery(query, null);
+        }
+        return cursor;
+    }
+
     public boolean updateGasto(int id, String description, double value, String date, String formaPagamento, String category) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();

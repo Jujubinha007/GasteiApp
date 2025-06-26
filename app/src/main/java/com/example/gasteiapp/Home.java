@@ -17,8 +17,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.database.Cursor;
 import android.widget.Toast;
+import android.widget.Button;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.chip.Chip;
 
 import java.util.ArrayList;
 
@@ -28,6 +34,7 @@ public class Home extends AppCompatActivity {
     Toolbar my_toolbar;
     DatabaseHelper dbHelper;
     GastoAdapter gastoAdapter;
+    private Chip chipCurrentMonth, chipLastMonth, chipAll;
 
     ArrayList<String> spinnerCategoria, spinnerFmPagamento, date, value, descricao;
 
@@ -55,6 +62,14 @@ public class Home extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         btnAdd = findViewById(R.id.btnAdd);
 
+        chipCurrentMonth = findViewById(R.id.chip_current_month);
+        chipLastMonth = findViewById(R.id.chip_last_month);
+        chipAll = findViewById(R.id.chip_all);
+
+        chipCurrentMonth.setOnClickListener(v -> displayData("CURRENT_MONTH"));
+        chipLastMonth.setOnClickListener(v -> displayData("LAST_MONTH"));
+        chipAll.setOnClickListener(v -> displayData("ALL"));
+
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,15 +82,15 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        displayData();
+        displayData("ALL"); // Default to show all
     }
 
-    private void displayData() {
+    private void displayData(String filter) {
         SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
         int userId = sharedPreferences.getInt(MainActivity.USER_ID_KEY, -1);
 
         if (userId != -1) {
-            Cursor cursor = dbHelper.getGastosByUser(userId);
+            Cursor cursor = dbHelper.getGastosByUser(userId, filter);
             // Clear existing data to avoid duplicates on resume
             spinnerCategoria.clear();
             spinnerFmPagamento.clear();
@@ -84,14 +99,15 @@ public class Home extends AppCompatActivity {
             descricao.clear();
 
             if (cursor.getCount() == 0 ){
-                Toast.makeText(this, "Sem gastos cadastrados.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Sem gastos para o filtro selecionado.", Toast.LENGTH_SHORT).show();
             }else{
                 while (cursor.moveToNext()){
-                    spinnerCategoria.add(cursor.getString(0));
-                    spinnerFmPagamento.add(cursor.getString(1));
-                    date.add(cursor.getString(2));
-                    value.add(cursor.getString(3));
-                    descricao.add(cursor.getString(4));
+                    spinnerCategoria.add(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CATEGORY)));
+                    spinnerFmPagamento.add(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_FORMAPAGAMENTO)));
+                    String dateFromDb = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATE));
+                    date.add(formatDateForDisplay(dateFromDb));
+                    value.add(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_VALUE)));
+                    descricao.add(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESCRIPTION)));
                 }
             }
             gastoAdapter = new GastoAdapter(this, cursor);
@@ -119,6 +135,19 @@ public class Home extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
+        }
+    }
+
+    private String formatDateForDisplay(String dateStr) {
+        if (dateStr == null) return "";
+        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        try {
+            Date date = dbFormat.parse(dateStr);
+            return displayFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return dateStr; // fallback to original string
         }
     }
 

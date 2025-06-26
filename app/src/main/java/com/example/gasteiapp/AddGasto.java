@@ -181,7 +181,7 @@ public class AddGasto extends AppCompatActivity {
                 (view, year1, monthOfYear, dayOfMonth) -> {
                     Calendar newDate = Calendar.getInstance();
                     newDate.set(year1, monthOfYear, dayOfMonth);
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd / MM / yyyy", Locale.getDefault());
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                     editData.setText(sdf.format(newDate.getTime()));
                 }, year, month, day);
 

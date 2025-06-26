@@ -17,6 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHolder> {
@@ -81,7 +84,7 @@ public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHol
         holder.descriptionText.setText(description);
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
         holder.valueText.setText(currencyFormat.format(value));
-        holder.dateText.setText(date);
+        holder.dateText.setText(formatDateForDisplay(date));
         holder.categoryText.setText(category);
         holder.paymentMethodText.setText(forma_pagamento);
     }
@@ -106,5 +109,19 @@ public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHol
             if (value.equalsIgnoreCase(items[i])) return i;
         }
         return 0; // default
+    }
+
+    private String formatDateForDisplay(String dateStr) {
+        if (dateStr == null) return "";
+        // Assuming the date from DB is in "yyyy-MM-dd" format
+        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        try {
+            Date date = dbFormat.parse(dateStr);
+            return displayFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return dateStr; // Fallback to original string if parsing fails
+        }
     }
 } 

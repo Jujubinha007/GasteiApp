@@ -31,6 +31,44 @@
         app2:layout_constraintStart_toStartOf="@+id/my_toolbar"
         app2:layout_constraintTop_toTopOf="@id/my_toolbar" />
 
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupFilters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app2:singleSelection="true"
+        app2:singleLine="true"
+        app2:chipSpacing="8dp"
+        app2:layout_constraintTop_toBottomOf="@id/my_toolbar"
+        app2:layout_constraintStart_toStartOf="parent"
+        app2:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_all"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:text="Todos"
+            android:textColor="@color/dark_green"
+            android:chipStrokeColor="@color/dark_green"
+            android:chipStrokeWidth="1dp"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_current_month"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:text="Mês Atual"
+            android:textColor="@color/dark_green"
+            android:chipStrokeColor="@color/dark_green"
+            android:chipStrokeWidth="1dp"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_last_month"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:text="Mês Anterior"
+            android:textColor="@color/dark_green"
+            android:chipStrokeColor="@color/dark_green"
+            android:chipStrokeWidth="1dp"/>
+    </com.google.android.material.chip.ChipGroup>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         app:id="@+id/btnAdd"
         app:layout_width="wrap_content"
@@ -46,12 +84,12 @@
     <androidx.recyclerview.widget.RecyclerView
         app:id="@+id/recyclerView"
         app:layout_width="409dp"
-        app:layout_height="729dp"
+        app:layout_height="0dp"
         app:layout_marginTop="20dp"
         app2:layout_constraintBottom_toBottomOf="parent"
         app2:layout_constraintEnd_toEndOf="parent"
         app2:layout_constraintStart_toStartOf="parent"
-        app2:layout_constraintTop_toBottomOf="@id/my_toolbar" />
+        app2:layout_constraintTop_toBottomOf="@id/chipGroupFilters" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
