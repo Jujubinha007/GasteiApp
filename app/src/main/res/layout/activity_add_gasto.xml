@@ -168,6 +168,74 @@
                 app2:layout_constraintTop_toBottomOf="@id/spinnerCategoria" />
         </LinearLayout>
 
+        <!-- Coluna 6: Foto -->
+        <LinearLayout
+            android:id="@+id/coluna6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            app2:layout_constraintEnd_toEndOf="parent"
+            app2:layout_constraintStart_toStartOf="parent"
+            app2:layout_constraintTop_toBottomOf="@id/coluna3">
+
+            <!-- Camera Button -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start|center_vertical">
+
+                <ImageButton
+                    android:id="@+id/btnEntrar"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/button_camera"
+                    android:src="@drawable/camera" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Adicionar foto do comprovante"
+                    android:textColor="@color/dark_green"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Image Preview Container -->
+            <FrameLayout
+                android:id="@+id/imageContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/imagePreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:maxHeight="400dp"
+                    android:background="@drawable/container_components"
+                    android:layout_marginHorizontal="8dp" />
+
+                <ImageButton
+                    android:id="@+id/btnRemoveImage"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/button_background_red"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    android:tint="@android:color/white"
+                    android:padding="6dp" />
+            </FrameLayout>
+        </LinearLayout>
+
         <!-- Coluna 5: descricao -->
         <LinearLayout
             android:id="@+id/coluna5"
@@ -179,7 +247,7 @@
             android:orientation="vertical"
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintStart_toStartOf="parent"
-            app2:layout_constraintTop_toBottomOf="@id/coluna3">
+            app2:layout_constraintTop_toBottomOf="@id/coluna6">
 
             <TextView
                 android:id="@+id/txtDescricao"
@@ -213,100 +281,38 @@
                 app2:layout_constraintTop_toBottomOf="@id/txtDescricao" />
         </LinearLayout>
 
-        <!-- Coluna 6: comprovante -->
+        <!-- Coluna 7: Botoes -->
         <LinearLayout
-            android:id="@+id/coluna6"
-            android:layout_width="280dp"
-            android:layout_height="85dp"
+            android:id="@+id/coluna7"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="20dp"
             android:orientation="vertical"
+            android:gravity="center"
+            app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintStart_toStartOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/coluna5">
 
-            <TextView
-                android:id="@+id/txtComprovante"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
-                android:text="Comprovante"
-                android:textColor="@color/dark_green"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <EditText
-                style="@style/Edit_Text_Add"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Tire uma foto..."
-                app2:layout_constraintEnd_toEndOf="@id/coluna7"
-                app2:layout_constraintStart_toStartOf="parent"
-                app2:layout_constraintTop_toBottomOf="@id/txtComprovante" />
-        </LinearLayout>
-
-        <!-- Coluna 7: valor -->
-        <LinearLayout
-            android:id="@+id/coluna7"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:layout_marginEnd="10dp"
-            android:orientation="vertical"
-            app2:layout_constraintEnd_toEndOf="parent"
-            app2:layout_constraintStart_toEndOf="@id/coluna6"
-            app2:layout_constraintTop_toBottomOf="@id/coluna5">
-
-            <ImageButton
-                android:id="@+id/btnEntrar"
-                style="@style/Button_Camera"
-                android:src="@drawable/camera"
-                android:padding="8dp"
-                app2:layout_constraintEnd_toEndOf="@id/coluna7"
-                app2:layout_constraintStart_toStartOf="@id/coluna7"
-                app2:layout_constraintTop_toBottomOf="@id/coluna5" />
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/imagePreview"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="16dp"
-            android:visibility="gone"
-            android:scaleType="centerCrop"
-            app:layout_constraintTop_toBottomOf="@id/coluna7"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <LinearLayout
-            android:id="@+id/buttons_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imagePreview">
-
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnLimpar"
                 style="@style/Button_Cadastro"
                 android:text="Limpar"
                 app:background="@drawable/button"
                 app:backgroundTint="@color/light_green"
-                app2:layout_constraintEnd_toEndOf="parent"
                 app2:layout_constraintStart_toStartOf="parent"
-                app2:layout_constraintTop_toBottomOf="parent"/>
+                app2:layout_constraintEnd_toEndOf="parent"
+                app2:layout_constraintTop_toBottomOf="@id/coluna7"/>
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnSalvar"
                 style="@style/Button_Cadastro"
                 android:text="Salvar"
                 app:background="@drawable/button"
-                app2:layout_constraintEnd_toEndOf="parent"
                 app2:layout_constraintStart_toStartOf="parent"
-                app2:layout_constraintTop_toBottomOf="parent"/>
+                app2:layout_constraintEnd_toEndOf="parent"
+                app2:layout_constraintTop_toBottomOf="@id/btnLimpar"/>
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

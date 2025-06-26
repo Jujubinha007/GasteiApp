@@ -197,6 +197,13 @@ public class Home extends AppCompatActivity {
                     String date = c.getString(c.getColumnIndexOrThrow("date"));
                     String category = c.getString(c.getColumnIndexOrThrow("category"));
                     String formaPagamento = c.getString(c.getColumnIndexOrThrow("forma_pagamento"));
+                    String imagePath = null;
+                    try {
+                        imagePath = c.getString(c.getColumnIndexOrThrow("image_path"));
+                    } catch (IllegalArgumentException e) {
+                        // Column doesn't exist yet, will be null
+                        imagePath = null;
+                    }
 
                     Intent intent = new Intent(Home.this, AddGasto.class);
                     intent.putExtra("edit_mode", true);
@@ -206,6 +213,7 @@ public class Home extends AppCompatActivity {
                     intent.putExtra("date", date);
                     intent.putExtra("category", category);
                     intent.putExtra("forma_pagamento", formaPagamento);
+                    intent.putExtra("image_path", imagePath);
                     startActivity(intent);
                 }
             });

@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.content.SharedPreferences;
@@ -14,7 +15,6 @@ import android.app.DatePickerDialog;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +26,14 @@ import android.graphics.Color;
 import androidx.core.content.ContextCompat;
 import android.content.res.ColorStateList;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
+import android.view.View;
+import android.net.Uri;
+
 public class AddGasto extends AppCompatActivity {
     Toolbar my_toolbar;
     private Spinner spinnerCategoria, spinnerFmPagamento;
@@ -33,7 +41,27 @@ public class AddGasto extends AppCompatActivity {
     private Button btnAddGasto;
     private Button btnLimpar;
     private ImageButton btnAddFoto;
+    private ImageView imagePreview;
+    private ImageButton btnRemoveImage;
+    private View imageContainer;
     private DatabaseHelper dbHelper;
+    private String currentImagePath;
+
+    ActivityResultLauncher<Intent> cameraLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null && data.hasExtra("image_path")) {
+                            currentImagePath = data.getStringExtra("image_path");
+                            imagePreview.setImageURI(Uri.parse(currentImagePath));
+                            imageContainer.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +80,9 @@ public class AddGasto extends AppCompatActivity {
         editData = findViewById(R.id.editData);
         editValor = findViewById(R.id.editValor);
         editDescricao = findViewById(R.id.editDescricao);
+        imagePreview = findViewById(R.id.imagePreview);
+        btnRemoveImage = findViewById(R.id.btnRemoveImage);
+        imageContainer = findViewById(R.id.imageContainer);
 
         // categoria
         ArrayAdapter<CharSequence> catAdapter = ArrayAdapter.createFromResource(
@@ -92,6 +123,7 @@ public class AddGasto extends AppCompatActivity {
             String date = intent.getStringExtra("date");
             String category = intent.getStringExtra("category");
             String formaPagamento = intent.getStringExtra("forma_pagamento");
+            currentImagePath = intent.getStringExtra("image_path");
 
             // Pre-fill fields
             editDescricao.setText(description);
@@ -105,6 +137,11 @@ public class AddGasto extends AppCompatActivity {
             if (formaPagamento != null) {
                 int pagPos = pagAdapter.getPosition(formaPagamento);
                 if (pagPos >= 0) spinnerFmPagamento.setSelection(pagPos);
+            }
+
+            if (currentImagePath != null && !currentImagePath.isEmpty()) {
+                imagePreview.setImageURI(Uri.parse(currentImagePath));
+                imageContainer.setVisibility(View.VISIBLE);
             }
 
             // Configure buttons
@@ -150,6 +187,10 @@ public class AddGasto extends AppCompatActivity {
                 editData.setText("");
                 spinnerCategoria.setSelection(0);
                 spinnerFmPagamento.setSelection(0);
+                // Clear image
+                currentImagePath = null;
+                imagePreview.setImageURI(null);
+                imageContainer.setVisibility(View.GONE);
             });
 
             // btnAddGasto is now the bottom button, should be dark green
@@ -165,7 +206,14 @@ public class AddGasto extends AppCompatActivity {
         // Camera button remains unchanged
         btnAddFoto.setOnClickListener(v -> {
             Intent cameraIntent = new Intent(AddGasto.this, CameraActivity.class);
-            startActivity(cameraIntent);
+            cameraLauncher.launch(cameraIntent);
+        });
+
+        // Remove image button
+        btnRemoveImage.setOnClickListener(v -> {
+            currentImagePath = null;
+            imagePreview.setImageURI(null);
+            imageContainer.setVisibility(View.GONE);
         });
 
         editData.setOnClickListener(v -> showDatePickerDialog());
@@ -212,27 +260,24 @@ public class AddGasto extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
         int userId = sharedPreferences.getInt(MainActivity.USER_ID_KEY, -1);
 
-        boolean success;
-        if (isUpdate) {
-            success = dbHelper.updateGasto(gastoId, description, value, date, formaPagamento, category);
+        if (userId != -1) {
+            boolean success;
+            if (isUpdate) {
+                success = dbHelper.updateGasto(gastoId, description, value, date, formaPagamento, category, currentImagePath);
+            } else {
+                success = dbHelper.addGasto(category, value, date, formaPagamento, description, userId, currentImagePath);
+            }
+
             if (success) {
-                Toast.makeText(AddGasto.this, "Gasto atualizado com sucesso!", Toast.LENGTH_SHORT).show();
+                String message = isUpdate ? "Gasto atualizado com sucesso!" : "Gasto adicionado com sucesso!";
+                Toast.makeText(AddGasto.this, message, Toast.LENGTH_SHORT).show();
                 finish();
             } else {
-                Toast.makeText(AddGasto.this, "Erro ao atualizar o gasto.", Toast.LENGTH_SHORT).show();
+                String message = isUpdate ? "Erro ao atualizar o gasto." : "Erro ao adicionar o gasto.";
+                Toast.makeText(AddGasto.this, message, Toast.LENGTH_SHORT).show();
             }
         } else {
-            if (userId == -1) {
-                Toast.makeText(AddGasto.this, "Erro: Usuário não logado.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            success = dbHelper.addGasto(category, value, date, formaPagamento, description, userId);
-            if (success) {
-                Toast.makeText(AddGasto.this, "Gasto adicionado com sucesso!", Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                Toast.makeText(AddGasto.this, "Erro ao adicionar o gasto.", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(AddGasto.this, "Erro: Usuário não encontrado.", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private Context context;
     private static final String DATABASE_NAME = "GasteiApp.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
 
     private static final String TABLE_NAME = "gastos";
     private static final String COLUMN_ID = "id";
@@ -57,9 +57,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 2) {
-            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_IMAGE_PATH + " TEXT");
+        if (oldVersion < 4) {
+            Cursor cursor = db.rawQuery("PRAGMA table_info(" + TABLE_NAME + ")", null);
+            boolean imagePathColumnExists = false;
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    int nameIndex = cursor.getColumnIndex("name");
+                    if (nameIndex != -1) {
+                        if (COLUMN_IMAGE_PATH.equals(cursor.getString(nameIndex))) {
+                            imagePathColumnExists = true;
+                            break;
+                        }
+                    }
+                }
+                cursor.close();
+            }
+
+            if (!imagePathColumnExists) {
+                db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_IMAGE_PATH + " TEXT");
+            }
         }
+    }
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Handle downgrade gracefully by recreating tables
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        onCreate(db);
     }
 
     public boolean addUser(String username, String password) {
