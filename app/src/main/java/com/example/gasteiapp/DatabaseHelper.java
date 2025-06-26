@@ -10,11 +10,14 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+// Classe auxiliar para gerenciar o banco de dados SQLite.
 public class DatabaseHelper extends SQLiteOpenHelper {
     private Context context;
+    // Nome e versão do banco de dados.
     private static final String DATABASE_NAME = "GasteiApp.db";
     private static final int DATABASE_VERSION = 5;
 
+    // Constantes para a tabela de gastos.
     private static final String TABLE_NAME = "gastos";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_DESCRIPTION = "description";
@@ -27,11 +30,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_LONGITUDE = "longitude";
     private static final String COLUMN_LOCATION_NAME = "location_name";
 
+    // Constantes para a tabela de usuários.
     private static final String TABLE_USERS = "users";
     private static final String COLUMN_USER_ID = "user_id";
     private static final String COLUMN_USERNAME = "username";
     private static final String COLUMN_PASSWORD = "password";
 
+    // Constantes para a tabela de locais.
     private static final String TABLE_PLACES = "places";
     private static final String COLUMN_PLACE_ID = "place_id";
     private static final String COLUMN_PLACE_NAME = "place_name";
@@ -39,19 +44,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_PLACE_LONGITUDE = "place_longitude";
     private static final String COLUMN_PLACE_USER_ID = "place_user_id";
 
+    // Construtor do DatabaseHelper.
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
     }
 
     @Override
+    // Método chamado quando o banco de dados é criado pela primeira vez.
     public void onCreate(SQLiteDatabase db) {
+        // Query para criar a tabela de usuários.
         String query_users = "CREATE TABLE " + TABLE_USERS + " (" +
                 COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_USERNAME + " TEXT, " +
                 COLUMN_PASSWORD + " TEXT);";
         db.execSQL(query_users);
 
+        // Query para criar a tabela de gastos, com chave estrangeira para usuários.
         String query_gastos = "CREATE TABLE " + TABLE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_DESCRIPTION + " TEXT, " +
@@ -67,6 +76,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY(user_id) REFERENCES " + TABLE_USERS + "(" + COLUMN_USER_ID + "));";
         db.execSQL(query_gastos);
 
+        // Query para criar a tabela de locais, com chave estrangeira para usuários.
         String query_places = "CREATE TABLE " + TABLE_PLACES + " (" +
                 COLUMN_PLACE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_PLACE_NAME + " TEXT, " +
@@ -78,9 +88,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
+    // Método chamado quando a versão do banco de dados é atualizada.
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Lógica para adicionar a coluna image_path se a versão antiga for menor que 4.
         if (oldVersion < 4) {
-            // Add image_path column if it doesn't exist
             Cursor cursor = db.rawQuery("PRAGMA table_info(" + TABLE_NAME + ")", null);
             boolean imagePathColumnExists = false;
             if (cursor != null) {
@@ -101,17 +112,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
         
+        // Lógica para adicionar colunas de localização à tabela de gastos e criar a tabela de locais se a versão antiga for menor que 5.
         if (oldVersion < 5) {
-            // Add location columns to gastos table
             try {
                 db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_LATITUDE + " REAL");
                 db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_LONGITUDE + " REAL");
                 db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_LOCATION_NAME + " TEXT");
             } catch (Exception e) {
-                // Columns might already exist
+                // As colunas podem já existir.
             }
             
-            // Create places table
             String query_places = "CREATE TABLE IF NOT EXISTS " + TABLE_PLACES + " (" +
                     COLUMN_PLACE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_PLACE_NAME + " TEXT, " +
@@ -124,20 +134,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
+    // Método chamado quando a versão do banco de dados é rebaixada. Recria as tabelas.
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Handle downgrade gracefully by recreating tables
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLACES);
         onCreate(db);
     }
 
+    // Adiciona um novo usuário ao banco de dados.
     public boolean addUser(String username, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
-        // NOTE: Storing passwords in plain text is not secure.
-        // In a real application, you should hash and salt the password.
+        // Armazenar senhas em texto puro não é seguro. Em uma aplicação real, hashes e salts devem ser usados.
         cv.put(COLUMN_USERNAME, username);
         cv.put(COLUMN_PASSWORD, password);
 
@@ -145,6 +155,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    // Verifica se um usuário com o nome de usuário fornecido existe.
     public boolean checkUser(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = { COLUMN_USER_ID };
@@ -156,9 +167,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count > 0;
     }
 
+    // Verifica se um usuário com o nome de usuário e senha fornecidos existe (para login).
     public boolean checkUser(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
-        // NOTE: This is not secure. Passwords should be hashed and compared.
+        // Isso não é seguro. Senhas devem ser hashadas e comparadas.
         String[] columns = { COLUMN_USER_ID };
         String selection = COLUMN_USERNAME + " = ? AND " + COLUMN_PASSWORD + " = ?";
         String[] selectionArgs = { username, password };
@@ -168,6 +180,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count > 0;
     }
 
+    // Obtém o ID de um usuário pelo nome de usuário.
     public int getUserId(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = { COLUMN_USER_ID };
@@ -182,6 +195,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return userId;
     }
 
+    // Adiciona um novo gasto ao banco de dados, incluindo dados de imagem e localização.
     public boolean addGasto(String category, double value, String date, String formaPagamento, String description, int userId, String imagePath, Double latitude, Double longitude, String locationName) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -201,10 +215,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    // Adiciona um novo gasto sem dados de imagem ou localização.
     public boolean addGasto(String category, double value, String date, String formaPagamento, String description, int userId) {
         return addGasto(category, value, date, formaPagamento, description, userId, null, null, null, null);
     }
 
+    // Obtém todos os gastos de um usuário.
     public Cursor getGastosByUser(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_NAME + " WHERE user_id = " + userId;
@@ -215,6 +231,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    // Obtém os gastos de um usuário com base em um filtro (mês atual, mês passado, todos).
     public Cursor getGastosByUser(int userId, String filter) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_NAME + " WHERE user_id = " + userId;
@@ -226,7 +243,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             case "LAST_MONTH":
                 query += " AND strftime('%Y-%m', " + COLUMN_DATE + ") = strftime('%Y-%m', 'now', '-1 month')";
                 break;
-            // "ALL" case needs no extra query modification
+            // O caso "ALL" não precisa de modificação extra na query.
         }
 
         Cursor cursor = null;
@@ -236,6 +253,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    // Atualiza um gasto existente, incluindo dados de imagem e localização.
     public boolean updateGasto(int id, String description, double value, String date, String formaPagamento, String category, String imagePath, Double latitude, Double longitude, String locationName) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -252,17 +270,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rows > 0;
     }
 
+    // Atualiza um gasto existente sem dados de imagem ou localização.
     public boolean updateGasto(int id, String description, double value, String date, String formaPagamento, String category) {
         return updateGasto(id, description, value, date, formaPagamento, category, null, null, null, null);
     }
 
+    // Exclui um gasto do banco de dados.
     public boolean deleteGasto(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         int rows = db.delete(TABLE_NAME, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
         return rows > 0;
     }
 
-    // Place management methods
+    // Métodos para gerenciamento de locais
+
+    // Adiciona um novo local salvo ao banco de dados para um usuário.
     public boolean addPlace(String placeName, double latitude, double longitude, int userId) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -274,18 +296,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    // Obtém todos os locais salvos por um usuário.
     public Cursor getUserPlaces(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_PLACES + " WHERE " + COLUMN_PLACE_USER_ID + " = " + userId;
         return db.rawQuery(query, null);
     }
 
+    // Exclui um local salvo do banco de dados.
     public boolean deletePlace(int placeId) {
         SQLiteDatabase db = this.getWritableDatabase();
         int rows = db.delete(TABLE_PLACES, COLUMN_PLACE_ID + " = ?", new String[]{String.valueOf(placeId)});
         return rows > 0;
     }
 
+    // Atualiza um local salvo existente.
     public boolean updatePlace(int placeId, String placeName, double latitude, double longitude) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -296,20 +321,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rows > 0;
     }
 
-    // Calculate distance between two coordinates using Haversine formula
+    // Calcula a distância entre duas coordenadas usando a fórmula de Haversine.
     public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        final int R = 6371; // Radius of the earth in km
+        final int R = 6371; // Raio da Terra em km.
         double latDistance = Math.toRadians(lat2 - lat1);
         double lonDistance = Math.toRadians(lon2 - lon1);
         double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
                 + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
+        double distance = R * c * 1000; // Converte para metros.
         return distance;
     }
 
-    // Find nearby places within 50 meters
+    // Encontra locais próximos (dentro de 50 metros) às coordenadas atuais de um usuário.
     public String findNearbyPlace(double currentLat, double currentLon, int userId) {
         Cursor cursor = getUserPlaces(userId);
         String nearbyPlace = null;
@@ -321,7 +346,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String placeName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PLACE_NAME));
                 
                 double distance = calculateDistance(currentLat, currentLon, placeLat, placeLon);
-                if (distance <= 50) { // 50 meters radius
+                if (distance <= 50) { // Raio de 50 metros.
                     nearbyPlace = placeName;
                     break;
                 }

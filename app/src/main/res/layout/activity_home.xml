@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Layout principal para a tela Home, exibindo a lista de gastos e opções de filtro. -->
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,126 +9,137 @@
     android:fillViewport="true"
     tools:ignore="NamespaceTypo">
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/my_toolbar"
+    <!-- ConstraintLayout principal que organiza todos os elementos da tela. -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/background"
-        app:titleTextColor="@color/dark_green"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="40dp"
-        android:src="@drawable/logo_gastei_horizontal"
-        android:layout_marginEnd="180dp"
-        android:layout_marginTop="5dp"
-        app:layout_constraintEnd_toEndOf="@id/my_toolbar"
-        app:layout_constraintStart_toStartOf="@id/my_toolbar"
-        app:layout_constraintTop_toTopOf="@id/my_toolbar" />
+        android:layout_height="match_parent">
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroupFilters"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginHorizontal="16dp"
-        app:singleSelection="true"
-        app:singleLine="true"
-        app:chipSpacing="12dp"
-        app:layout_constraintTop_toBottomOf="@id/my_toolbar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        <!-- Toolbar no topo da tela. -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background"
+            app:titleTextColor="@color/dark_green"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_all"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
+        <!-- Logotipo horizontal do aplicativo na Toolbar. -->
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:src="@drawable/logo_gastei_horizontal"
+            android:layout_marginEnd="180dp"
+            android:layout_marginTop="5dp"
+            app:layout_constraintEnd_toEndOf="@id/my_toolbar"
+            app:layout_constraintStart_toStartOf="@id/my_toolbar"
+            app:layout_constraintTop_toTopOf="@id/my_toolbar" />
+
+        <!-- Grupo de Chips para filtros de gastos (Todos, Mês Atual, Mês Anterior). -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupFilters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginHorizontal="16dp"
+            app:singleSelection="true"
+            app:singleLine="true"
+            app:chipSpacing="12dp"
+            app:layout_constraintTop_toBottomOf="@id/my_toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Chip para filtrar todos os gastos. -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_all"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Todos"
+                android:textColor="@color/chip_text_color"
+                app:chipBackgroundColor="@color/chip_background_color"
+                app:chipStrokeColor="@color/chip_stroke_color"
+                app:chipStrokeWidth="2dp"
+                app:chipCornerRadius="20dp"
+                android:elevation="2dp"
+                app:rippleColor="@color/ripple_green"
+                android:layout_marginEnd="4dp"/>
+
+            <!-- Chip para filtrar gastos do mês atual. -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_current_month"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mês Atual"
+                android:textColor="@color/chip_text_color"
+                app:chipBackgroundColor="@color/chip_background_color"
+                app:chipStrokeColor="@color/chip_stroke_color"
+                app:chipStrokeWidth="2dp"
+                app:chipCornerRadius="20dp"
+                android:elevation="2dp"
+                app:rippleColor="@color/ripple_green"
+                android:layout_marginHorizontal="4dp"/>
+
+            <!-- Chip para filtrar gastos do mês anterior. -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_last_month"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mês Anterior"
+                android:textColor="@color/chip_text_color"
+                app:chipBackgroundColor="@color/chip_background_color"
+                app:chipStrokeColor="@color/chip_stroke_color"
+                app:chipStrokeWidth="2dp"
+                app:chipCornerRadius="20dp"
+                android:elevation="2dp"
+                app:rippleColor="@color/ripple_green"
+                android:layout_marginStart="4dp"/>
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Título da seção de gastos. -->
+        <TextView
+            android:id="@+id/tvGastosTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Todos"
-            android:textColor="@color/chip_text_color"
-            app:chipBackgroundColor="@color/chip_background_color"
-            app:chipStrokeColor="@color/chip_stroke_color"
-            app:chipStrokeWidth="2dp"
-            app:chipCornerRadius="20dp"
-            android:elevation="2dp"
-            app:rippleColor="@color/ripple_green"
-            android:layout_marginEnd="4dp"/>
+            android:text="Seus Gastos"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/dark_green"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/chipGroupFilters"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_current_month"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
+        <!-- Botão de ação flutuante para adicionar um novo gasto. -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mês Atual"
-            android:textColor="@color/chip_text_color"
-            app:chipBackgroundColor="@color/chip_background_color"
-            app:chipStrokeColor="@color/chip_stroke_color"
-            app:chipStrokeWidth="2dp"
-            app:chipCornerRadius="20dp"
-            android:elevation="2dp"
-            app:rippleColor="@color/ripple_green"
-            android:layout_marginHorizontal="4dp"/>
+            android:layout_marginEnd="40dp"
+            android:layout_marginBottom="48dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:backgroundTint="@color/dark_green"
+            app:tint="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_add"/>
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_last_month"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mês Anterior"
-            android:textColor="@color/chip_text_color"
-            app:chipBackgroundColor="@color/chip_background_color"
-            app:chipStrokeColor="@color/chip_stroke_color"
-            app:chipStrokeWidth="2dp"
-            app:chipCornerRadius="20dp"
-            android:elevation="2dp"
-            app:rippleColor="@color/ripple_green"
-            android:layout_marginStart="4dp"/>
-    </com.google.android.material.chip.ChipGroup>
+        <!-- RecyclerView para exibir a lista de gastos. -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="409dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvGastosTitle" />
 
-    <TextView
-        android:id="@+id/tvGastosTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Seus Gastos"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="@color/dark_green"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/chipGroupFilters"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="48dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:backgroundTint="@color/dark_green"
-        app:tint="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="409dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvGastosTitle" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Layout principal para a tela de adicionar/editar um gasto. -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,11 +10,13 @@
     tools:ignore="NamespaceTypo"
     android:importantForAccessibility="no">
 
+    <!-- ConstraintLayout principal que organiza todos os elementos da tela. -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Toolbar no topo da tela. -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/my_toolbar"
             android:layout_width="match_parent"
@@ -24,6 +27,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:titleTextColor="@color/dark_green" />
 
+        <!-- Título da tela "Cadastrar Gasto". -->
         <TextView
             android:id="@+id/txtTelaAdd"
             android:layout_width="wrap_content"
@@ -37,7 +41,7 @@
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/my_toolbar"/>
 
-        <!-- Coluna 1: Categoria -->
+        <!-- Coluna 1: Categoria do gasto. -->
         <LinearLayout
             android:id="@+id/coluna1"
             android:layout_width="180dp"
@@ -48,6 +52,7 @@
             app2:layout_constraintStart_toStartOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/txtTelaAdd">
 
+            <!-- Título do campo Categoria. -->
             <TextView
                 android:id="@+id/txtCategoria"
                 android:layout_width="wrap_content"
@@ -58,6 +63,7 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
+            <!-- Spinner para seleção da categoria. -->
             <Spinner
                 android:id="@+id/spinnerCategoria"
                 style="@style/Edit_Text_Add"
@@ -69,7 +75,7 @@
                 app2:layout_constraintEnd_toEndOf="parent"/>
         </LinearLayout>
 
-        <!-- Coluna 2: Forma de pagamento-->
+        <!-- Coluna 2: Forma de pagamento do gasto. -->
         <LinearLayout
             android:id="@+id/coluna2"
             android:layout_width="180dp"
@@ -80,6 +86,7 @@
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/txtTelaAdd">
 
+            <!-- Título do campo Forma de pagamento. -->
             <TextView
                 android:id="@+id/txtFmPagamento"
                 android:layout_width="wrap_content"
@@ -90,6 +97,7 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
+            <!-- Spinner para seleção da forma de pagamento. -->
             <Spinner
                 android:id="@+id/spinnerFmPagamento"
                 style="@style/Edit_Text_Add"
@@ -101,7 +109,7 @@
                 app2:layout_constraintEnd_toEndOf="parent"/>
         </LinearLayout>
 
-        <!-- Coluna 3: data -->
+        <!-- Coluna 3: Data do gasto. -->
         <LinearLayout
             android:id="@+id/coluna3"
             android:layout_width="180dp"
@@ -112,6 +120,7 @@
             app2:layout_constraintStart_toStartOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/coluna1">
 
+            <!-- Título do campo Data do gasto. -->
             <TextView
                 android:id="@+id/txtData"
                 android:layout_width="wrap_content"
@@ -122,6 +131,7 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
+            <!-- EditText para seleção da data do gasto (abre um DatePickerDialog). -->
             <EditText
                 android:id="@+id/editData"
                 style="@style/Edit_Text_Add"
@@ -136,7 +146,7 @@
                 app2:layout_constraintTop_toBottomOf="@id/spinnerCategoria" />
         </LinearLayout>
 
-        <!-- Coluna 4: valor -->
+        <!-- Coluna 4: Valor do gasto. -->
         <LinearLayout
             android:id="@+id/coluna4"
             android:layout_width="180dp"
@@ -147,6 +157,7 @@
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/coluna2">
 
+            <!-- Título do campo Valor. -->
             <TextView
                 android:id="@+id/txtValor"
                 android:layout_width="wrap_content"
@@ -157,6 +168,7 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
+            <!-- EditText para o valor do gasto. -->
             <EditText
                 android:id="@+id/editValor"
                 style="@style/Edit_Text_Add"
@@ -168,7 +180,42 @@
                 app2:layout_constraintTop_toBottomOf="@id/spinnerCategoria" />
         </LinearLayout>
 
-        <!-- Coluna 6: Foto -->
+        <!-- Coluna 5: Descrição do gasto. -->
+        <LinearLayout
+            android:id="@+id/coluna5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            app2:layout_constraintEnd_toEndOf="parent"
+            app2:layout_constraintStart_toStartOf="parent"
+            app2:layout_constraintTop_toBottomOf="@id/coluna3">
+
+            <!-- Título do campo Descrição. -->
+            <TextView
+                android:id="@+id/txtDescricao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="Descrição"
+                android:textColor="@color/dark_green"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <!-- EditText para a descrição do gasto. -->
+            <EditText
+                android:id="@+id/editDescricao"
+                style="@style/Edit_Text_Add"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="top"
+                android:hint="Descreva seu gasto..."
+                android:inputType="textMultiLine" />
+        </LinearLayout>
+
+        <!-- Coluna 6: Adicionar foto do comprovante. -->
         <LinearLayout
             android:id="@+id/coluna6"
             android:layout_width="match_parent"
@@ -180,9 +227,9 @@
             android:gravity="center"
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintStart_toStartOf="parent"
-            app2:layout_constraintTop_toBottomOf="@id/coluna3">
+            app2:layout_constraintTop_toBottomOf="@id/coluna5">
 
-            <!-- Camera Button -->
+            <!-- Botão da câmera para adicionar foto. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -194,8 +241,10 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:background="@drawable/button_camera"
-                    android:src="@drawable/camera" />
+                    android:src="@drawable/camera"
+                    android:contentDescription="Adicionar foto"/>
 
+                <!-- Texto informativo para o botão da câmera. -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -205,7 +254,7 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
-            <!-- Image Preview Container -->
+            <!-- Contêiner para pré-visualização da imagem e botão de remover. -->
             <FrameLayout
                 android:id="@+id/imageContainer"
                 android:layout_width="match_parent"
@@ -213,6 +262,7 @@
                 android:layout_marginTop="12dp"
                 android:visibility="gone">
 
+                <!-- ImageView para exibir a pré-visualização da imagem. -->
                 <ImageView
                     android:id="@+id/imagePreview"
                     android:layout_width="match_parent"
@@ -221,8 +271,10 @@
                     android:adjustViewBounds="true"
                     android:maxHeight="400dp"
                     android:background="@drawable/container_components"
-                    android:layout_marginHorizontal="8dp" />
+                    android:layout_marginHorizontal="8dp"
+                    android:contentDescription="Pré-visualização da imagem" />
 
+                <!-- Botão para remover a imagem. -->
                 <ImageButton
                     android:id="@+id/btnRemoveImage"
                     android:layout_width="32dp"
@@ -232,11 +284,12 @@
                     android:background="@drawable/button_background_red"
                     android:src="@android:drawable/ic_menu_close_clear_cancel"
                     android:tint="@android:color/white"
-                    android:padding="6dp" />
+                    android:padding="6dp"
+                    android:contentDescription="Remover imagem" />
             </FrameLayout>
         </LinearLayout>
 
-        <!-- Coluna 7: Location -->
+        <!-- Coluna 7: Localização. -->
         <LinearLayout
             android:id="@+id/coluna7"
             android:layout_width="match_parent"
@@ -249,16 +302,18 @@
             app2:layout_constraintStart_toStartOf="parent"
             app2:layout_constraintTop_toBottomOf="@id/coluna6">
 
+            <!-- Título do campo Localização. -->
             <TextView
+                android:id="@+id/txtLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:text="Local (opcional)"
+                android:text="Localização"
                 android:textColor="@color/dark_green"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
-            <!-- Location buttons row -->
+            <!-- Botões para obter localização atual ou selecionar locais salvos. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -266,6 +321,7 @@
                 android:layout_marginTop="8dp"
                 android:gravity="start|center_vertical">
 
+                <!-- Botão para obter a localização atual do GPS. -->
                 <Button
                     android:id="@+id/btnGetLocation"
                     android:layout_width="0dp"
@@ -277,6 +333,7 @@
                     android:backgroundTint="@color/dark_green"
                     android:textColor="@android:color/white" />
 
+                <!-- Botão para selecionar um local de uma lista de locais salvos. -->
                 <Button
                     android:id="@+id/btnSelectPlace"
                     android:layout_width="0dp"
@@ -289,7 +346,7 @@
                     android:textColor="@color/dark_green" />
             </LinearLayout>
 
-            <!-- Location display -->
+            <!-- Campo de texto para exibir ou digitar o nome do local. -->
             <EditText
                 android:id="@+id/editLocation"
                 style="@style/Edit_Text_Add"
@@ -299,109 +356,65 @@
                 android:hint="Digite o local manualmente ou use GPS"
                 android:inputType="text" />
 
-            <!-- Save place option (visible when GPS location is set) -->
+            <!-- Opção para salvar o local (visível quando a localização GPS é definida). -->
             <LinearLayout
                 android:id="@+id/layoutSavePlace"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:layout_marginTop="4dp"
-                android:visibility="gone"
-                android:gravity="center_vertical">
+                android:visibility="gone">
 
+                <!-- CheckBox para perguntar se o usuário deseja salvar o local. -->
                 <CheckBox
                     android:id="@+id/checkSavePlace"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/dark_green" />
 
+                <!-- Texto para a opção de salvar local. -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Salvar este local para uso futuro"
-                    android:textColor="@color/dark_green"
-                    android:textSize="13sp" />
+                    android:text="Salvar local para uso futuro" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Coluna 5: descricao -->
-        <LinearLayout
-            android:id="@+id/coluna5"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="5dp"
-            android:orientation="vertical"
-            app2:layout_constraintEnd_toEndOf="parent"
-            app2:layout_constraintStart_toStartOf="parent"
-            app2:layout_constraintTop_toBottomOf="@id/coluna7">
-
-            <TextView
-                android:id="@+id/txtDescricao"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:text="Descrição"
-                android:textColor="@color/dark_green"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app2:layout_constraintEnd_toEndOf="parent"
-                app2:layout_constraintStart_toStartOf="parent"
-                app2:layout_constraintTop_toBottomOf="@id/coluna5" />
-
-            <EditText
-                android:id="@+id/editDescricao"
-                style="@style/Edit_Text_Add"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Digite aqui..."
-                android:inputType="textMultiLine"
-                android:gravity="top|start"
-                android:lines="4"
-                app:maxLines="6"
-                android:maxLength="200"
-                android:scrollbars="vertical"
-                android:overScrollMode="always"
-                app2:layout_constraintEnd_toEndOf="@id/coluna5"
-                app2:layout_constraintStart_toStartOf="@id/coluna5"
-                app2:layout_constraintTop_toBottomOf="@id/txtDescricao" />
-        </LinearLayout>
-
-        <!-- Coluna 7: Botoes -->
+        <!-- Coluna 8: Botões de ação (Limpar e Adicionar/Salvar Gasto). -->
         <LinearLayout
             android:id="@+id/coluna8"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="25dp"
             android:orientation="vertical"
-            android:gravity="center"
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintStart_toStartOf="parent"
-            app2:layout_constraintTop_toBottomOf="@id/coluna5">
+            app2:layout_constraintTop_toBottomOf="@id/coluna7"
+            app2:layout_constraintBottom_toBottomOf="parent">
 
+            <!-- Botão para limpar os campos (ou excluir o gasto em modo de edição). -->
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnLimpar"
-                style="@style/Button_Cadastro"
-                android:text="Limpar"
-                app:background="@drawable/button"
-                app:backgroundTint="@color/light_green"
-                app2:layout_constraintStart_toStartOf="parent"
-                app2:layout_constraintEnd_toEndOf="parent"
-                app2:layout_constraintTop_toBottomOf="@id/coluna8"/>
+                style="@style/Button_Green"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:text="Limpar" />
 
+            <!-- Botão para adicionar um novo gasto (ou salvar alterações em modo de edição). -->
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnSalvar"
-                style="@style/Button_Cadastro"
-                android:text="Salvar"
-                app:background="@drawable/button"
-                app2:layout_constraintStart_toStartOf="parent"
-                app2:layout_constraintEnd_toEndOf="parent"
-                app2:layout_constraintTop_toBottomOf="@id/btnLimpar"/>
+                style="@style/Button_Green"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Adicionar Gasto" />
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.core.widget.NestedScrollView>

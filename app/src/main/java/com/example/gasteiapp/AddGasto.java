@@ -46,8 +46,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import android.view.View;
 import android.view.MenuItem;
 
+// Activity para adicionar ou editar um gasto.
 public class AddGasto extends AppCompatActivity {
-    Toolbar my_toolbar;
+    private Toolbar my_toolbar;
     private Spinner spinnerCategoria, spinnerFmPagamento;
     private EditText editData, editValor, editDescricao;
     private Button btnAddGasto;
@@ -59,20 +60,22 @@ public class AddGasto extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private String currentImagePath;
 
-    // Location related elements
+    // Elementos relacionados à localização.
     private Button btnGetLocation;
     private Button btnSelectPlace;
     private EditText editLocation;
     private CheckBox checkSavePlace;
     private LinearLayout layoutSavePlace;
     
-    // Location data
+    // Dados de localização.
     private Double currentLatitude;
     private Double currentLongitude;
     private LocationManager locationManager;
     
+    // Código de requisição de permissão de localização.
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
 
+    // Launcher para iniciar a CameraActivity e obter o resultado (caminho da imagem).
     ActivityResultLauncher<Intent> cameraLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -94,12 +97,14 @@ public class AddGasto extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_add_gasto);
+        // Ajusta o padding da tela para acomodar as barras do sistema (status bar, navigation bar).
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        // Inicializa as views.
         my_toolbar = findViewById(R.id.my_toolbar);
         spinnerCategoria = findViewById(R.id.spinnerCategoria);
         spinnerFmPagamento = findViewById(R.id.spinnerFmPagamento);
@@ -110,47 +115,52 @@ public class AddGasto extends AppCompatActivity {
         btnRemoveImage = findViewById(R.id.btnRemoveImage);
         imageContainer = findViewById(R.id.imageContainer);
 
-        // Location elements
+        // Elementos de localização.
         btnGetLocation = findViewById(R.id.btnGetLocation);
         btnSelectPlace = findViewById(R.id.btnSelectPlace);
         editLocation = findViewById(R.id.editLocation);
         checkSavePlace = findViewById(R.id.checkSavePlace);
         layoutSavePlace = findViewById(R.id.layoutSavePlace);
         
+        // Inicializa o LocationManager.
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        // categoria
+        // Configuração do spinner de categoria.
         ArrayAdapter<CharSequence> catAdapter = ArrayAdapter.createFromResource(
                 this, R.array.categorias_array, android.R.layout.simple_spinner_item);
         catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCategoria.setAdapter(catAdapter);
 
-        // Pagamentos
+        // Configuração do spinner de formas de pagamento.
         ArrayAdapter<CharSequence> pagAdapter = ArrayAdapter.createFromResource(
                 this, R.array.pagamento_array,
                 android.R.layout.simple_spinner_item);
         pagAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerFmPagamento.setAdapter(pagAdapter);
 
+        // Inicializa o DatabaseHelper.
         dbHelper = new DatabaseHelper(this);
 
+        // Configuração da Toolbar.
         setSupportActionBar(my_toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Corrected this line
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Habilita o botão de voltar.
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
         }
 
+        // Inicializa botões.
         btnAddGasto = findViewById(R.id.btnSalvar);
         btnLimpar = findViewById(R.id.btnLimpar);
         btnAddFoto = findViewById(R.id.btnEntrar);
 
-        // Default listeners (will be overwritten in edit mode if necessary)
+        // Remove listeners padrão para configurar em modo de edição ou criação.
         btnAddGasto.setOnClickListener(null);
         btnLimpar.setOnClickListener(null);
 
         Intent intent = getIntent();
         boolean isEditMode = intent.getBooleanExtra("edit_mode", false);
         int gastoId = -1;
+        // Verifica se a Activity foi iniciada no modo de edição.
         if (isEditMode) {
             gastoId = intent.getIntExtra("gasto_id", -1);
             String description = intent.getStringExtra("description");
@@ -160,7 +170,7 @@ public class AddGasto extends AppCompatActivity {
             String formaPagamento = intent.getStringExtra("forma_pagamento");
             currentImagePath = intent.getStringExtra("image_path");
 
-            // Load location data if editing
+            // Carrega dados de localização existentes se estiver no modo de edição.
             String existingLocation = intent.getStringExtra("location_name");
             currentLatitude = intent.getDoubleExtra("latitude", Double.NaN);
             currentLongitude = intent.getDoubleExtra("longitude", Double.NaN);
@@ -173,11 +183,11 @@ public class AddGasto extends AppCompatActivity {
                 layoutSavePlace.setVisibility(View.VISIBLE);
             }
 
-            // Pre-fill fields
+            // Preenche os campos da UI com os dados do gasto para edição.
             editDescricao.setText(description);
             editValor.setText(String.valueOf(value));
             editData.setText(date);
-            // Set spinner selection
+            // Define a seleção dos spinners.
             if (category != null) {
                 int catPos = catAdapter.getPosition(category);
                 if (catPos >= 0) spinnerCategoria.setSelection(catPos);
@@ -187,14 +197,13 @@ public class AddGasto extends AppCompatActivity {
                 if (pagPos >= 0) spinnerFmPagamento.setSelection(pagPos);
             }
 
+            // Exibe a imagem se houver um caminho.
             if (currentImagePath != null && !currentImagePath.isEmpty()) {
                 imagePreview.setImageURI(Uri.parse(currentImagePath));
                 imageContainer.setVisibility(View.VISIBLE);
             }
 
-            // Configure buttons
-            // --- Desired order in EDIT MODE ---
-            // Top button (btnLimpar) -> Excluir (red)
+            // Configura o botão "Limpar" para "Excluir" no modo de edição.
             btnLimpar.setText("Excluir");
             btnLimpar.setBackground(ContextCompat.getDrawable(this, R.drawable.button_background_red));
             btnLimpar.setTextColor(Color.WHITE);
@@ -212,7 +221,7 @@ public class AddGasto extends AppCompatActivity {
                 }
             });
 
-            // Bottom button (btnAddGasto) -> Salvar Alterações (green)
+            // Configura o botão "Salvar" para "Salvar Alterações" no modo de edição.
             btnAddGasto.setText("Salvar Alterações");
             btnAddGasto.setBackground(ContextCompat.getDrawable(this, R.drawable.button_background_dark_green));
             btnAddGasto.setTextColor(Color.WHITE);
@@ -222,24 +231,23 @@ public class AddGasto extends AppCompatActivity {
                 handleSaveOrUpdate(catAdapter, pagAdapter, true, finalGastoIdUpdate);
             });
         } else {
-            // ---------- CREATE MODE CONFIG ----------
-            // btnLimpar is now the top button, should be gray
+            // Configura o botão "Limpar" para o modo de criação.
             btnLimpar.setText("Limpar");
             btnLimpar.setBackground(ContextCompat.getDrawable(this, R.drawable.button_background_gray));
             btnLimpar.setTextColor(Color.BLACK);
             btnLimpar.setBackgroundTintList(null);
             btnLimpar.setOnClickListener(v -> {
-                // Clear inputs
+                // Limpa todos os campos de entrada.
                 editDescricao.setText("");
                 editValor.setText("");
                 editData.setText("");
                 spinnerCategoria.setSelection(0);
                 spinnerFmPagamento.setSelection(0);
-                // Clear image
+                // Limpa a imagem.
                 currentImagePath = null;
                 imagePreview.setImageURI(null);
                 imageContainer.setVisibility(View.GONE);
-                // Clear location
+                // Limpa os dados de localização.
                 currentLatitude = null;
                 currentLongitude = null;
                 editLocation.setText("");
@@ -247,8 +255,8 @@ public class AddGasto extends AppCompatActivity {
                 checkSavePlace.setChecked(false);
             });
 
-            // btnAddGasto is now the bottom button, should be dark green
-            btnAddGasto.setText("Salvar");
+            // Configura o botão "Adicionar Gasto" para o modo de criação.
+            btnAddGasto.setText("Adicionar Gasto");
             btnAddGasto.setBackground(ContextCompat.getDrawable(this, R.drawable.button_background_dark_green));
             btnAddGasto.setTextColor(Color.WHITE);
             btnAddGasto.setBackgroundTintList(null);
@@ -257,26 +265,66 @@ public class AddGasto extends AppCompatActivity {
             });
         }
 
-        // Camera button remains unchanged
+        // Listener para o botão de adicionar foto.
         btnAddFoto.setOnClickListener(v -> {
-            Intent cameraIntent = new Intent(AddGasto.this, CameraActivity.class);
-            cameraLauncher.launch(cameraIntent);
+            Intent intentCamera = new Intent(AddGasto.this, CameraActivity.class);
+            cameraLauncher.launch(intentCamera);
         });
 
-        // Remove image button
+        // Listener para o botão de remover imagem.
         btnRemoveImage.setOnClickListener(v -> {
             currentImagePath = null;
             imagePreview.setImageURI(null);
             imageContainer.setVisibility(View.GONE);
         });
 
-        // Location button listeners
+        // Listener para o campo de data (abre o DatePickerDialog).
+        editData.setOnClickListener(v -> showDatePickerDialog());
+
+        // Listener para o botão de obter localização atual.
         btnGetLocation.setOnClickListener(v -> getCurrentLocation());
+
+        // Listener para o botão de selecionar locais salvos.
         btnSelectPlace.setOnClickListener(v -> showSavedPlaces());
 
-        editData.setOnClickListener(v -> showDatePickerDialog());
+        // Listener para o CheckBox de salvar local, controla a visibilidade do layout.
+        checkSavePlace.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                layoutSavePlace.setVisibility(View.VISIBLE);
+            } else {
+                layoutSavePlace.setVisibility(View.GONE);
+            }
+        });
     }
 
+    @Override
+    // Lida com a seleção de itens na Toolbar (ex: botão de voltar).
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // Limpa todos os campos da UI.
+    private void clearFields() {
+        editDescricao.setText("");
+        editValor.setText("");
+        editData.setText("");
+        spinnerCategoria.setSelection(0);
+        spinnerFmPagamento.setSelection(0);
+        currentImagePath = null;
+        imagePreview.setImageURI(null);
+        imageContainer.setVisibility(View.GONE);
+        currentLatitude = null;
+        currentLongitude = null;
+        editLocation.setText("");
+        layoutSavePlace.setVisibility(View.GONE);
+        checkSavePlace.setChecked(false);
+    }
+
+    // Exibe o DatePickerDialog para seleção da data.
     private void showDatePickerDialog() {
         final Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -294,7 +342,7 @@ public class AddGasto extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    // Helper to save or update
+    // Lida com a lógica de salvar ou atualizar um gasto.
     private void handleSaveOrUpdate(ArrayAdapter<CharSequence> catAdapter, ArrayAdapter<CharSequence> pagAdapter, boolean isUpdate, int gastoId) {
         String category = spinnerCategoria.getSelectedItem().toString();
         String formaPagamento = spinnerFmPagamento.getSelectedItem().toString();
@@ -302,7 +350,8 @@ public class AddGasto extends AppCompatActivity {
         String date = editData.getText().toString();
         String valueStr = editValor.getText().toString();
 
-        if (catAdapter.isEmpty() || pagAdapter.isEmpty() || date.isEmpty() || valueStr.isEmpty() || description.isEmpty()) {
+        // Validação dos campos obrigatórios.
+        if (category.isEmpty() || formaPagamento.isEmpty() || date.isEmpty() || valueStr.isEmpty() || description.isEmpty()) {
             Toast.makeText(AddGasto.this, "Por favor, preencha todos os campos.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -311,7 +360,7 @@ public class AddGasto extends AppCompatActivity {
         try {
             value = Double.parseDouble(valueStr);
         } catch (NumberFormatException e) {
-            Toast.makeText(AddGasto.this, "Por favor, insira um valor válido.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddGasto.this, "Valor inválido. Por favor, insira um número válido.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -319,7 +368,7 @@ public class AddGasto extends AppCompatActivity {
         int userId = sharedPreferences.getInt(MainActivity.USER_ID_KEY, -1);
 
         if (userId != -1) {
-            // Handle location data
+            // Lida com os dados de localização.
             String locationName = editLocation.getText().toString().trim();
             if (locationName.isEmpty()) {
                 locationName = null;
@@ -327,17 +376,16 @@ public class AddGasto extends AppCompatActivity {
                 currentLongitude = null;
             }
             
-            // Save place if requested and GPS coordinates available
-            if (checkSavePlace.isChecked() && currentLatitude != null && currentLongitude != null && !locationName.isEmpty()) {
-                if (!locationName.matches("^-?\\d+\\.\\d+,\\s*-?\\d+\\.\\d+$")) { // Not just coordinates
-                    boolean placeSaved = dbHelper.addPlace(locationName, currentLatitude, currentLongitude, userId);
-                    if (placeSaved) {
-                        Toast.makeText(AddGasto.this, "Local salvo para uso futuro!", Toast.LENGTH_SHORT).show();
-                    }
+            // Salva o local se solicitado e se as coordenadas GPS estiverem disponíveis e o nome do local não for apenas coordenadas.
+            if (checkSavePlace.isChecked() && currentLatitude != null && currentLongitude != null && locationName != null && !locationName.matches("^-?\\d+\\.\\d+,\\s*-?\\d+\\.\\d+$")) {
+                boolean placeSaved = dbHelper.addPlace(locationName, currentLatitude, currentLongitude, userId);
+                if (placeSaved) {
+                    Toast.makeText(AddGasto.this, "Local salvo para uso futuro!", Toast.LENGTH_SHORT).show();
                 }
             }
             
             boolean success;
+            // Chama o método de atualização ou adição no DatabaseHelper.
             if (isUpdate) {
                 success = dbHelper.updateGasto(gastoId, description, value, date, formaPagamento, category, currentImagePath, currentLatitude, currentLongitude, locationName);
             } else {
@@ -357,18 +405,22 @@ public class AddGasto extends AppCompatActivity {
         }
     }
 
-    // Location methods
+    // Métodos de localização.
+
+    // Obtém a localização GPS atual do dispositivo.
     private void getCurrentLocation() {
+        // Verifica e solicita permissão de localização se necessário.
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
             return;
         }
 
-        // Show loading feedback
+        // Exibe feedback de carregamento.
         btnGetLocation.setText("Localizando...");
         btnGetLocation.setEnabled(false);
 
         try {
+            // Tenta obter a última localização conhecida do GPS ou da rede.
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (location == null) {
                 location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -378,35 +430,35 @@ public class AddGasto extends AppCompatActivity {
                 currentLatitude = location.getLatitude();
                 currentLongitude = location.getLongitude();
                 
-                // Check for nearby saved places first
+                // Verifica primeiro se há locais salvos próximos.
                 SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
                 int userId = sharedPreferences.getInt(MainActivity.USER_ID_KEY, -1);
                 
                 String nearbyPlace = dbHelper.findNearbyPlace(currentLatitude, currentLongitude, userId);
                 
                 if (nearbyPlace != null) {
-                    // Found a nearby saved place - auto-set it
+                    // Se um local salvo próximo for encontrado, preenche automaticamente e oculta a opção de salvar.
                     editLocation.setText(nearbyPlace);
-                    layoutSavePlace.setVisibility(View.GONE); // Hide save option since place already exists
+                    layoutSavePlace.setVisibility(View.GONE); // Oculta a opção de salvar, pois o local já existe.
                     
-                    // Show success feedback with place name
+                    // Exibe feedback de sucesso com o nome do local.
                     btnGetLocation.setText("✓ " + nearbyPlace);
                     btnGetLocation.setBackgroundTintList(getResources().getColorStateList(android.R.color.holo_green_dark));
                     
                     Toast.makeText(this, "Local reconhecido: " + nearbyPlace, Toast.LENGTH_LONG).show();
                     
-                    // Reset button after 2 seconds
+                    // Reinicia o botão após 2 segundos.
                     btnGetLocation.postDelayed(() -> {
                         btnGetLocation.setText("Local Atual");
                         btnGetLocation.setBackgroundTintList(getResources().getColorStateList(R.color.dark_green));
                     }, 2000);
                     
                 } else {
-                    // No nearby place found - show coordinates and option to save
+                    // Nenhum local próximo encontrado - exibe coordenadas e opção para salvar.
                     String locationText = String.format("%.6f, %.6f", currentLatitude, currentLongitude);
                     editLocation.setText(locationText);
                     layoutSavePlace.setVisibility(View.VISIBLE);
-                    checkSavePlace.setChecked(false); // Reset checkbox
+                    checkSavePlace.setChecked(false); // Reseta o checkbox.
                     
                     btnGetLocation.setText("Local Atual");
                     
@@ -424,10 +476,12 @@ public class AddGasto extends AppCompatActivity {
         btnGetLocation.setEnabled(true);
     }
 
+    // Exibe um diálogo com a lista de locais salvos para seleção.
     private void showSavedPlaces() {
         SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
         int userId = sharedPreferences.getInt(MainActivity.USER_ID_KEY, -1);
         
+        // Obtém a lista de locais salvos do banco de dados.
         Cursor cursor = dbHelper.getUserPlaces(userId);
         List<String> placeDisplayNames = new ArrayList<>();
         List<String> placeNames = new ArrayList<>();
@@ -444,7 +498,7 @@ public class AddGasto extends AppCompatActivity {
                 placeLatitudes.add(placeLat);
                 placeLongitudes.add(placeLon);
                 
-                // Show distance if current location is available
+                // Exibe a distância se a localização atual estiver disponível.
                 String displayName = placeName;
                 if (currentLatitude != null && currentLongitude != null) {
                     double distance = DatabaseHelper.calculateDistance(currentLatitude, currentLongitude, placeLat, placeLon);
@@ -454,7 +508,7 @@ public class AddGasto extends AppCompatActivity {
                         displayName = String.format("%s (%.1fkm)", placeName, distance / 1000);
                     }
                     
-                    // Add indicator for very close places
+                    // Adiciona um indicador para locais muito próximos.
                     if (distance <= 50) {
                         displayName = displayName + " - Você está aqui!";
                     }
@@ -469,17 +523,18 @@ public class AddGasto extends AppCompatActivity {
             return;
         }
         
+        // Constrói e exibe o diálogo de seleção de locais.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Selecionar Local Salvo");
         builder.setItems(placeDisplayNames.toArray(new String[0]), (dialog, which) -> {
             String selectedPlace = placeNames.get(which);
             editLocation.setText(selectedPlace);
             
-            // Set coordinates for selected place
+            // Define as coordenadas para o local selecionado.
             currentLatitude = placeLatitudes.get(which);
             currentLongitude = placeLongitudes.get(which);
             
-            // Hide save place option since this is already a saved place
+            // Oculta a opção de salvar local, pois este já é um local salvo.
             layoutSavePlace.setVisibility(View.GONE);
             
             Toast.makeText(this, "Local selecionado: " + selectedPlace, Toast.LENGTH_SHORT).show();
@@ -493,6 +548,7 @@ public class AddGasto extends AppCompatActivity {
     }
 
     @Override
+    // Lida com o resultado da requisição de permissão de localização.
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
@@ -502,14 +558,5 @@ public class AddGasto extends AppCompatActivity {
                 Toast.makeText(this, "Permissão de localização é necessária para usar o GPS", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

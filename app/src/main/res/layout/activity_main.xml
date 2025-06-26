@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- Layout principal para a tela de login (MainActivity). -->
 <androidx.core.widget.NestedScrollView xmlns:tools="http://schemas.android.com/tools"
     app:layout_height="match_parent"
     app:layout_width="match_parent"
@@ -7,86 +8,93 @@
     xmlns:app="http://schemas.android.com/apk/res/android"
     tools:ignore="NamespaceTypo">
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background"
-    tools:context=".MainActivity">
-    
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:src="@drawable/logo_gastei"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+    <!-- ConstraintLayout principal que organiza todos os elementos da tela. -->
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background"
+        tools:context=".MainActivity">
 
-    <View
-        android:id="@+id/containerComponents"
-        style="@style/ContainerComponents"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/logo"/>
+        <!-- Logotipo do aplicativo. -->
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/logo_gastei"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-    <EditText
-        android:id="@+id/editEmail"
-        style="@style/Edit_Text"
-        android:drawableStart="@drawable/email"
-        android:drawablePadding="8dp"
-        android:hint="E-mail"
-        android:inputType="textEmailAddress"
-        app:layout_constraintStart_toStartOf="@id/containerComponents"
-        app:layout_constraintEnd_toEndOf="@id/containerComponents"
-        app:layout_constraintTop_toTopOf="@id/containerComponents"/>
+        <!-- Contêiner visual para agrupar os campos de e-mail e senha. -->
+        <View
+            android:id="@+id/containerComponents"
+            style="@style/ContainerComponents"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/logo"/>
 
-    <EditText
-        android:id="@+id/editSenha"
-        style="@style/Edit_Text"
-        android:drawableStart="@drawable/cadeado"
-        android:drawablePadding="8dp"
-        android:hint="Senha"
-        android:inputType="numberPassword"
-        app:layout_constraintStart_toStartOf="@id/containerComponents"
-        app:layout_constraintEnd_toEndOf="@id/containerComponents"
-        app:layout_constraintTop_toBottomOf="@id/editEmail"/>
+        <!-- Campo de texto para o e-mail do usuário. -->
+        <EditText
+            android:id="@+id/editEmail"
+            style="@style/Edit_Text"
+            android:drawableStart="@drawable/email"
+            android:drawablePadding="8dp"
+            android:hint="E-mail"
+            android:inputType="textEmailAddress"
+            app:layout_constraintStart_toStartOf="@id/containerComponents"
+            app:layout_constraintEnd_toEndOf="@id/containerComponents"
+            app:layout_constraintTop_toTopOf="@id/containerComponents"/>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnEntrar"
-        style="@style/Button"
-        android:text="@string/entrar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editSenha"/>
+        <!-- Campo de texto para a senha do usuário. -->
+        <EditText
+            android:id="@+id/editSenha"
+            style="@style/Edit_Text"
+            android:drawableStart="@drawable/cadeado"
+            android:drawablePadding="8dp"
+            android:hint="Senha"
+            android:inputType="numberPassword"
+            app:layout_constraintStart_toStartOf="@id/containerComponents"
+            app:layout_constraintEnd_toEndOf="@id/containerComponents"
+            app:layout_constraintTop_toBottomOf="@id/editEmail"/>
 
-    
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/containerComponents"/>
-    
-    <TextView
-        android:id="@+id/txtTelaLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/naotem_conta"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/dark_green"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="30dp"
-        android:pointerIcon="arrow"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/progressBar"/>
+        <!-- Botão para realizar o login. -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnEntrar"
+            style="@style/Button"
+            android:text="@string/entrar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editSenha"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Barra de progresso (inicialmente invisível), exibida durante o processo de login. -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/containerComponents"/>
+
+        <!-- Texto que direciona o usuário para a tela de cadastro, se não tiver uma conta. -->
+        <TextView
+            android:id="@+id/txtTelaLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/naotem_conta"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/dark_green"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="30dp"
+            android:pointerIcon="arrow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/progressBar"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

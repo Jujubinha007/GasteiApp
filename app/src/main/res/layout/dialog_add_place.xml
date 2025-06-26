@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Layout para o diálogo de adicionar ou editar um local. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="24dp">
 
+    <!-- Título do diálogo. -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -14,6 +16,7 @@
         android:textColor="@color/dark_green"
         android:layout_marginBottom="20dp" />
 
+    <!-- Título do campo Nome do local. -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,6 +26,7 @@
         android:textSize="15sp"
         android:textStyle="bold" />
 
+    <!-- EditText para o nome do local. -->
     <EditText
         android:id="@+id/etPlaceName"
         style="@style/Edit_Text_Add"
@@ -32,6 +36,7 @@
         android:layout_marginBottom="16dp"
         android:hint="Digite o nome do local" />
 
+    <!-- Título do campo Latitude. -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,6 +46,7 @@
         android:textSize="15sp"
         android:textStyle="bold" />
 
+    <!-- EditText para a latitude. -->
     <EditText
         android:id="@+id/etLatitude"
         style="@style/Edit_Text_Add"
@@ -51,6 +57,7 @@
         android:hint="-23.550520"
         android:inputType="numberDecimal|numberSigned" />
 
+    <!-- Título do campo Longitude. -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,6 +67,7 @@
         android:textSize="15sp"
         android:textStyle="bold" />
 
+    <!-- EditText para a longitude. -->
     <EditText
         android:id="@+id/etLongitude"
         style="@style/Edit_Text_Add"
@@ -70,12 +78,14 @@
         android:hint="-46.633309"
         android:inputType="numberDecimal|numberSigned" />
 
+    <!-- Contêiner para os botões de ação (Cancelar e Salvar). -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="end">
 
+        <!-- Botão para cancelar a operação. -->
         <Button
             android:id="@+id/btnCancel"
             style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -85,6 +95,7 @@
             android:text="Cancelar"
             android:textColor="@color/dark_green" />
 
+        <!-- Botão para salvar o local. -->
         <Button
             android:id="@+id/btnSave"
             android:layout_width="wrap_content"
