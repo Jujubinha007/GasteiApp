@@ -68,7 +68,7 @@
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_delete"
-                android:tint="@android:color/holo_red_dark"
+                app:tint="@android:color/holo_red_dark"
                 android:padding="8dp"
                 android:contentDescription="Excluir local" />
 

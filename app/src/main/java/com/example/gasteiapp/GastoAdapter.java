@@ -1,16 +1,9 @@
 package com.example.gasteiapp;
 
-import static android.text.TextUtils.indexOf;
-
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,43 +12,51 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
+// Adapter para exibir a lista de gastos em um RecyclerView.
 public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHolder> {
 
     private Context mContext;
-    private Cursor mCursor;
-    private OnItemClickListener listener;
+    private List<Gasto> mGastoList; // Lista de objetos Gasto a serem exibidos
+    private OnItemClickListener listener; // Listener para cliques nos itens
 
+    // Interface para o callback de clique no item
     public interface OnItemClickListener {
-        void onItemClick(Cursor cursor);
+        void onItemClick(Gasto gasto);
     }
 
+    // Define o listener para cliques nos itens
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
     }
 
-    public GastoAdapter(Context context, Cursor cursor) {
+    // Construtor do adapter
+    public GastoAdapter(Context context, List<Gasto> gastoList) {
         mContext = context;
-        mCursor = cursor;
+        mGastoList = gastoList != null ? gastoList : new ArrayList<>();
     }
 
+    // ViewHolder que representa cada item da lista de gastos
     public class GastoViewHolder extends RecyclerView.ViewHolder {
         public TextView categoryText, paymentMethodText;
         public TextView descriptionText, valueText, dateText;
 
         public GastoViewHolder(@NonNull View itemView) {
             super(itemView);
+            // Referencia os componentes da UI dentro do item de layout
             categoryText = itemView.findViewById(R.id.gasto_category);
             paymentMethodText = itemView.findViewById(R.id.gasto_payment_method);
             descriptionText = itemView.findViewById(R.id.gasto_description);
             valueText = itemView.findViewById(R.id.gasto_value);
             dateText = itemView.findViewById(R.id.gasto_date);
+            // Configura o listener de clique para o item completo
             itemView.setOnClickListener(v -> {
                 if (listener != null && getAdapterPosition() != RecyclerView.NO_POSITION) {
-                    mCursor.moveToPosition(getAdapterPosition());
-                    listener.onItemClick(mCursor);
+                    listener.onItemClick(mGastoList.get(getAdapterPosition()));
                 }
             });
         }
@@ -63,6 +64,7 @@ public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHol
 
     @NonNull
     @Override
+    // Cria e retorna um novo ViewHolder
     public GastoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.gasto_item, parent, false);
@@ -70,58 +72,44 @@ public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHol
     }
 
     @Override
+    // Preenche os dados de um item específico no ViewHolder
     public void onBindViewHolder(@NonNull GastoViewHolder holder, int position) {
-        if (!mCursor.moveToPosition(position)) {
-            return;
-        }
+        Gasto gasto = mGastoList.get(position);
 
-        String description = mCursor.getString(mCursor.getColumnIndexOrThrow("description"));
-        double value = mCursor.getDouble(mCursor.getColumnIndexOrThrow("value"));
-        String date = mCursor.getString(mCursor.getColumnIndexOrThrow("date"));
-        String category = mCursor.getString(mCursor.getColumnIndexOrThrow("category"));
-        String forma_pagamento  = mCursor.getString(mCursor.getColumnIndexOrThrow("forma_pagamento"));
-
-        holder.descriptionText.setText(description);
+        holder.descriptionText.setText(gasto.getDescription());
+        // Formata o valor como moeda brasileira
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-        holder.valueText.setText(currencyFormat.format(value));
-        holder.dateText.setText(formatDateForDisplay(date));
-        holder.categoryText.setText(category);
-        holder.paymentMethodText.setText(forma_pagamento);
+        holder.valueText.setText(currencyFormat.format(gasto.getValue()));
+        holder.dateText.setText(formatDateForDisplay(gasto.getDate()));
+        holder.categoryText.setText(gasto.getCategory());
+        holder.paymentMethodText.setText(gasto.getFormaPagamento());
     }
 
     @Override
+    // Retorna o número total de itens na lista
     public int getItemCount() {
-        return mCursor.getCount();
+        return mGastoList.size();
     }
 
-    public void swapCursor(Cursor newCursor) {
-        if (mCursor != null) mCursor.close();
-        mCursor = newCursor;
-        if (newCursor != null) notifyDataSetChanged();
+    // Atualiza a lista de gastos e notifica o adapter sobre a mudança
+    public void setGastos(List<Gasto> gastos) {
+        mGastoList = gastos != null ? gastos : new ArrayList<>();
+        notifyDataSetChanged();
     }
 
-    // ---------- util ----------
-    private int indexOf(int arrayResId, String value) {
-        if (value == null) return 0;
-        Resources res = mContext.getResources();
-        String[] items = res.getStringArray(arrayResId);
-        for (int i = 0; i < items.length; i++) {
-            if (value.equalsIgnoreCase(items[i])) return i;
-        }
-        return 0; // default
-    }
-
+    // Formata a string de data para exibição
     private String formatDateForDisplay(String dateStr) {
         if (dateStr == null) return "";
-        // Assuming the date from DB is in "yyyy-MM-dd" format
+        // Assume que a data do DB está no formato "yyyy-MM-dd"
         SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        // Define o formato de exibição desejado
         SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         try {
             Date date = dbFormat.parse(dateStr);
             return displayFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
-            return dateStr; // Fallback to original string if parsing fails
+            return dateStr; // Retorna a string original em caso de erro de parsing
         }
     }
 } 

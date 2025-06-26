@@ -231,7 +231,7 @@
                     android:layout_margin="16dp"
                     android:background="@drawable/button_background_red"
                     android:src="@android:drawable/ic_menu_close_clear_cancel"
-                    android:tint="@android:color/white"
+                    app:tint="@android:color/white"
                     android:padding="6dp" />
             </FrameLayout>
         </LinearLayout>

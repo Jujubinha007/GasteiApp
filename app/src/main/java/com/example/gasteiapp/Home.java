@@ -10,92 +10,110 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.database.Cursor;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Button;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.chip.Chip;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
+// Activity Home, responsável por exibir a lista de gastos do usuário.
 public class Home extends AppCompatActivity {
-    RecyclerView recyclerView;
-    FloatingActionButton btnAdd;
-    Toolbar my_toolbar;
-    DatabaseHelper dbHelper;
-    GastoAdapter gastoAdapter;
+    // Componentes da UI
+    private RecyclerView recyclerView;
+    private FloatingActionButton btnAdd;
+    private Toolbar my_toolbar;
+    private GastoAdapter gastoAdapter;
+    private HomeViewModel homeViewModel;
     private Chip chipCurrentMonth, chipLastMonth, chipAll;
     private TextView tvGastosTitle;
-
-    ArrayList<String> spinnerCategoria, spinnerFmPagamento, date, value, descricao;
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
+        // Ajusta o padding da tela para acomodar as barras do sistema (status bar, navigation bar)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        // Inicializa a Toolbar
         my_toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(my_toolbar);
-        dbHelper = new DatabaseHelper(this);
-        spinnerCategoria = new ArrayList<>();
-        spinnerFmPagamento = new ArrayList<>();
-        date = new ArrayList<>();
-        value = new ArrayList<>();
-        descricao = new ArrayList<>();
 
+        // Obtém o ID do usuário logado das SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
+        userId = sharedPreferences.getInt(MainActivity.USER_ID_KEY, -1);
+
+        // Configura o RecyclerView
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        btnAdd = findViewById(R.id.btnAdd);
+        gastoAdapter = new GastoAdapter(this, new ArrayList<>());
+        recyclerView.setAdapter(gastoAdapter);
 
+        // Referencia os outros componentes da UI
+        btnAdd = findViewById(R.id.btnAdd);
         chipCurrentMonth = findViewById(R.id.chip_current_month);
         chipLastMonth = findViewById(R.id.chip_last_month);
         chipAll = findViewById(R.id.chip_all);
         tvGastosTitle = findViewById(R.id.tvGastosTitle);
 
-        chipCurrentMonth.setOnClickListener(v -> displayData("CURRENT_MONTH"));
-        chipLastMonth.setOnClickListener(v -> displayData("LAST_MONTH"));
-        chipAll.setOnClickListener(v -> displayData("ALL"));
-
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Home.this, AddGasto.class);
-                startActivity(intent);
+        // Inicializa o ViewModel e observa as mudanças na lista de gastos
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        homeViewModel.getGastos().observe(this, gastos -> {
+            gastoAdapter.setGastos(gastos);
+            if (gastos == null || gastos.isEmpty()) {
+                Toast.makeText(this, "Sem gastos para o filtro selecionado.", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        // Configura os listeners para os chips de filtro
+        chipCurrentMonth.setOnClickListener(v -> loadDataWithFilter("CURRENT_MONTH"));
+        chipLastMonth.setOnClickListener(v -> loadDataWithFilter("LAST_MONTH"));
+        chipAll.setOnClickListener(v -> loadDataWithFilter("ALL"));
+
+        // Listener para o botão de adicionar novo gasto
+        btnAdd.setOnClickListener(v -> {
+            Intent intent = new Intent(Home.this, AddGasto.class);
+            startActivity(intent);
+        });
+
+        // Listener para cliques nos itens da lista de gastos (para edição)
+        gastoAdapter.setOnItemClickListener(gasto -> {
+            Intent intent = new Intent(Home.this, AddGasto.class);
+            intent.putExtra("edit_mode", true);
+            intent.putExtra("gasto", gasto);
+            startActivity(intent);
         });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        displayData("ALL");
+        // Carrega os dados com o filtro "ALL" (todos os gastos) ao retomar a Activity
+        loadDataWithFilter("ALL");
         chipAll.setChecked(true);
     }
 
-    private void displayData(String filter) {
-        // Update chip selection state
+    // Carrega os dados de gastos com base no filtro selecionado
+    private void loadDataWithFilter(String filter) {
+        // Atualiza o estado dos chips de filtro
         chipAll.setChecked("ALL".equals(filter));
         chipCurrentMonth.setChecked("CURRENT_MONTH".equals(filter));
         chipLastMonth.setChecked("LAST_MONTH".equals(filter));
-        
-        // Set title according to filter
+
+        // Atualiza o título da seção de gastos com base no filtro
         if (tvGastosTitle != null) {
             if ("CURRENT_MONTH".equals(filter)) {
                 tvGastosTitle.setText("Seus Gastos - Mês Atual");
@@ -106,163 +124,24 @@ public class Home extends AppCompatActivity {
             }
         }
 
-        SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
-        int userId = sharedPreferences.getInt(MainActivity.USER_ID_KEY, -1);
-
+        // Carrega os gastos usando o ViewModel, se o userId for válido
         if (userId != -1) {
-            Cursor cursor = dbHelper.getGastosByUser(userId); // fetch all
-            String[] allColumns = cursor.getColumnNames();
-            android.database.MatrixCursor filteredCursor = new android.database.MatrixCursor(allColumns);
-
-            if (cursor.getCount() == 0 ){
-                Toast.makeText(this, "Sem gastos para o filtro selecionado.", Toast.LENGTH_SHORT).show();
-            } else {
-                // Determine reference months
-                java.util.Calendar calNow = java.util.Calendar.getInstance();
-                int currentMonth = calNow.get(java.util.Calendar.MONTH); // 0-based
-                int currentYear = calNow.get(java.util.Calendar.YEAR);
-                calNow.add(java.util.Calendar.MONTH, -1);
-                int lastMonth = calNow.get(java.util.Calendar.MONTH);
-                int lastMonthYear = calNow.get(java.util.Calendar.YEAR);
-
-                while (cursor.moveToNext()) {
-                    spinnerCategoria.add(cursor.getString(cursor.getColumnIndexOrThrow("category")));
-                    spinnerFmPagamento.add(cursor.getString(cursor.getColumnIndexOrThrow("forma_pagamento")));
-                    String dateFromDb = cursor.getString(cursor.getColumnIndexOrThrow("date"));
-                    // parse date (supports both "yyyy-MM-dd" and "dd / MM / yyyy")
-                    java.util.Calendar cal = java.util.Calendar.getInstance();
-                    boolean parsed = false;
-                    for (String pattern : new String[]{"yyyy-MM-dd", "dd / MM / yyyy", "dd/MM/yyyy"}) {
-                        try {
-                            java.text.DateFormat df = new java.text.SimpleDateFormat(pattern, java.util.Locale.getDefault());
-                            cal.setTime(df.parse(dateFromDb));
-                            parsed = true;
-                            break;
-                        } catch (Exception ignored) {}
-                    }
-
-                    boolean include = true;
-                    if (parsed) {
-                        int m = cal.get(java.util.Calendar.MONTH);
-                        int y = cal.get(java.util.Calendar.YEAR);
-                        if ("CURRENT_MONTH".equals(filter)) {
-                            include = (m == currentMonth && y == currentYear);
-                        } else if ("LAST_MONTH".equals(filter)) {
-                            include = (m == lastMonth && y == lastMonthYear);
-                        }
-                    } else {
-                        // if can't parse, include only for ALL
-                        include = "ALL".equals(filter);
-                    }
-
-                    if (include) {
-                        // add to lists (optional) and filteredCursor
-                        spinnerCategoria.add(cursor.getString(cursor.getColumnIndexOrThrow("category")));
-                        spinnerFmPagamento.add(cursor.getString(cursor.getColumnIndexOrThrow("forma_pagamento")));
-                        date.add(formatDateForDisplay(dateFromDb));
-                        value.add(cursor.getString(cursor.getColumnIndexOrThrow("value")));
-                        descricao.add(cursor.getString(cursor.getColumnIndexOrThrow("description")));
-
-                        Object[] rowData = new Object[allColumns.length];
-                        for (int i = 0; i < allColumns.length; i++) {
-                            int idx = cursor.getColumnIndexOrThrow(allColumns[i]);
-                            int type = cursor.getType(idx);
-                            switch (type) {
-                                case android.database.Cursor.FIELD_TYPE_INTEGER:
-                                    rowData[i] = cursor.getInt(idx);
-                                    break;
-                                case android.database.Cursor.FIELD_TYPE_FLOAT:
-                                    rowData[i] = cursor.getDouble(idx);
-                                    break;
-                                case android.database.Cursor.FIELD_TYPE_STRING:
-                                default:
-                                    rowData[i] = cursor.getString(idx);
-                                    break;
-                            }
-                        }
-                        filteredCursor.addRow(rowData);
-                    }
-                }
-            }
-            gastoAdapter = new GastoAdapter(this, filteredCursor);
-            recyclerView.setAdapter(gastoAdapter);
-            gastoAdapter.notifyDataSetChanged();
-
-            gastoAdapter.setOnItemClickListener(new GastoAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(Cursor c) {
-                    int id = c.getInt(c.getColumnIndexOrThrow("id"));
-                    String description = c.getString(c.getColumnIndexOrThrow("description"));
-                    double value = c.getDouble(c.getColumnIndexOrThrow("value"));
-                    String date = c.getString(c.getColumnIndexOrThrow("date"));
-                    String category = c.getString(c.getColumnIndexOrThrow("category"));
-                    String formaPagamento = c.getString(c.getColumnIndexOrThrow("forma_pagamento"));
-                    String imagePath = null;
-                    try {
-                        imagePath = c.getString(c.getColumnIndexOrThrow("image_path"));
-                    } catch (IllegalArgumentException e) {
-                        // Column doesn't exist yet, will be null
-                        imagePath = null;
-                    }
-
-                    // Get location data safely
-                    String locationName = null;
-                    Double latitude = null;
-                    Double longitude = null;
-                    try {
-                        locationName = c.getString(c.getColumnIndexOrThrow("location_name"));
-                        int latIndex = c.getColumnIndexOrThrow("latitude");
-                        int lonIndex = c.getColumnIndexOrThrow("longitude");
-                        if (!c.isNull(latIndex) && !c.isNull(lonIndex)) {
-                            latitude = c.getDouble(latIndex);
-                            longitude = c.getDouble(lonIndex);
-                        }
-                    } catch (IllegalArgumentException e) {
-                        // Location columns don't exist yet
-                    }
-
-                    Intent intent = new Intent(Home.this, AddGasto.class);
-                    intent.putExtra("edit_mode", true);
-                    intent.putExtra("gasto_id", id);
-                    intent.putExtra("description", description);
-                    intent.putExtra("value", value);
-                    intent.putExtra("date", date);
-                    intent.putExtra("category", category);
-                    intent.putExtra("forma_pagamento", formaPagamento);
-                    intent.putExtra("image_path", imagePath);
-                    intent.putExtra("location_name", locationName);
-                    if (latitude != null && longitude != null) {
-                        intent.putExtra("latitude", latitude);
-                        intent.putExtra("longitude", longitude);
-                    }
-                    startActivity(intent);
-                }
-            });
-        }
-    }
-
-    private String formatDateForDisplay(String dateStr) {
-        if (dateStr == null) return "";
-        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        try {
-            Date date = dbFormat.parse(dateStr);
-            return displayFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return dateStr; // fallback to original string
+            homeViewModel.loadGastos(userId, filter);
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Infla o menu da Toolbar
         getMenuInflater().inflate(R.menu.menu_home, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Lida com cliques nos itens do menu da Toolbar
         if (item.getItemId() == R.id.action_logout) {
+            // Limpa as SharedPreferences e retorna para a tela de login
             SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.clear();

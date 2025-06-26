@@ -44,6 +44,9 @@ dependencies {
     implementation(libs.camera.view)
     implementation(libs.camera.extensions)
 
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.livedata)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
